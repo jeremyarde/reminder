@@ -3,10 +3,6 @@
 
   let curr_interval;
   let intervalActive = false;
-  let incompleteStyle =
-    "flex flex-wrap px-2 bg-green-100 rounded relative border";
-  let completeStyle =
-    "flex flex-wrap bg-red-100 border border-red-400 text-red-700 px-2 rounded relative";
 
   export let habit;
   export let handleDelete;
@@ -66,6 +62,15 @@
     habit.duration = habit.prevDuration;
     habit.complete = false;
   }
+
+  let incompleteStyle =
+    "flex justify-center flex-wrap m-2 bg-green-200 rounded relative border";
+
+  let completeStyle =
+    "flex  justify-center flex-wrap m-2 bg-red-100 border border-red-400 text-red-700 px-2 rounded relative";
+
+  let buttonCss =
+    "bg-transparent hover:bg-yellow-100 text-grey font-semibold py-2 px-3 border-grey rounded m-2";
 </script>
 
 <style>
@@ -73,6 +78,12 @@
     text-align: center;
     margin: 1em;
     /* border: 3px solid green; */
+  }
+
+  .neumorph {
+    border-radius: 50px;
+    background: #55b9f3;
+    box-shadow: 20px 20px 60px #489dcf, -20px -20px 60px #62d5ff;
   }
 </style>
 
@@ -86,20 +97,10 @@
     bind:value={habit.duration}
     min="1"
     max="20000" />
-  <button
-    class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded m-2"
-    on:click={startPauseHabit}>
+  <button class={buttonCss} on:click={startPauseHabit}>
     {intervalActive == false ? 'Start' : 'Pause'}
   </button>
 
-  <button
-    class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded m-2"
-    on:click={resetHabit}>
-    Reset
-  </button>
-  <button
-    class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4
-    border-b-4 border-blue-700 hover:border-blue-500 rounded m-2"
-    on:click={handleDelete(habit.id)}>Delete
-  </button>
+  <button class={buttonCss} on:click={resetHabit}> Reset </button>
+  <button class={buttonCss} on:click={handleDelete(habit.id)}>Delete </button>
 </div>

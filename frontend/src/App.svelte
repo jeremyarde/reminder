@@ -1,10 +1,74 @@
 <script>
   import Tailwindcss from "./Tailwindcss.svelte";
   import HabitView from "./Habit.svelte";
+  import { onMount, onDestroy } from "svelte";
+
+  let habits = loadHabits();
+  let habitView = [];
+  updateHabitView();
+
   // import Habit from "./Habit.svelte";
 
-  let habits = new Map();
-  let habitView = [];
+  // if (typeof Storage !== "undefined") {
+  //   // Code for localStorage/sessionStorage.
+  //   console.log("we have localstorage");
+  // } else {
+  //   console.log("we have no storage support");
+  // }
+
+  onMount(async () => {
+    console.log("onMount triggered");
+    loadHabits();
+  });
+
+  // onDestroy(async () => {
+  //   console.log("onDestroy triggered");
+  //   saveHabits();
+  // });
+
+  function saveHabits() {
+    // if (typeof Storage !== "undefined") {
+    //   // Code for localStorage/sessionStorage.
+    //   console.log("we have localstorage");
+    // } else {
+    //   console.log("we have no storage support");
+    // }
+
+    console.log("Saving habits");
+    // console.log([...habits.values()]);
+    // console.log(JSON.stringify(habits.entries()));
+    localStorage.setItem("habits", JSON.stringify([...habits.values()]));
+  }
+
+  function loadHabits() {
+    let habitMap;
+
+    console.log("Loading habits");
+    let loadedHabits = localStorage.getItem("habits");
+
+    // loadedHabits.forEach((element) => {});
+    // (element) => {
+    //   JSON.parse(element);
+    // };
+    console.log(loadedHabits);
+    console.log(JSON.parse(loadedHabits));
+    loadedHabits = JSON.parse(loadedHabits);
+    console.log("is habits a map?");
+
+    console.log(loadedHabits !== typeof Map);
+    if (loadedHabits === null) {
+      habitMap = new Map();
+    } else if (typeof loadHabits === typeof Array) {
+      console.log("is list");
+      habitMap = new Map();
+      loadedHabits.forEach((element) => {
+        habitMap.set(element.id, element);
+      });
+    }
+
+    console.log(habitMap);
+    return habitMap;
+  }
 
   class Habit {
     constructor() {
@@ -36,17 +100,20 @@
   }
 
   function resetHabits() {
+    localStorage.removeItem("habits");
     habits = new Map();
     updateHabitView();
   }
 
   function deleteHabit(habitId) {
+    console.log(JSON.stringify(habits.get(habitId)));
     habits.delete(habitId);
     updateHabitView();
   }
 
   function updateHabitView() {
     habitView = Array.from(habits.values());
+    saveHabits();
   }
 </script>
 
@@ -54,15 +121,21 @@
   {#each habitView as habit}
     <HabitView {habit} handleDelete={deleteHabit} />
   {/each}
-
-  <button
-    class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded m-2"
-    on:click={addHabit}>
-    Create new habit
-  </button>
-  <button
-    class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded m-2"
-    on:click={resetHabits}>
-    Reset habits
-  </button>
+  <div class="flex justify-center">
+    <button
+      class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded m-2"
+      on:click={addHabit}>
+      Create new habit
+    </button>
+    <button
+      class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded m-2"
+      on:click={resetHabits}>
+      Reset habits
+    </button>
+    <button
+      class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded m-2"
+      on:click={saveHabits}>
+      Save habits
+    </button>
+  </div>
 </main>
