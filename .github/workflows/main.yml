@@ -12,13 +12,17 @@ on:
 
 jobs:
   build:
-    name: Build application
+
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: install
-      - uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: tauri build 
+    - run: curl -o- -L https://yarnpkg.com/install.sh | bash
+    - run: cd frontend && yarn install
+    - run: cd frontend && yarn run build 
+    - run: cd frontend/src-tauri/target/release/habitreminder.exe
+      env:
+        CI: true
