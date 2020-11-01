@@ -1,6 +1,8 @@
 <script>
   // import Tailwindcss from "./Tailwindcss.svelte";
-  // import { onDestroy } from "svelte";
+
+  import * as tauri from "tauri/api/tauri";
+  // var invoke = window.__TAURI__.tauri.invoke;
 
   let curr_interval;
   let intervalActive = false;
@@ -12,11 +14,37 @@
   export let habit;
   export let handleDelete;
 
+  function triggerNotification() {
+    // tauri.invoke({
+    //       cmd: "myCustomCommand",
+    //       arg: "My messages from JS",
+    //     });
+    let permission;
+
+    if (!("Notification" in window)) {
+      alert("This browser does not support desktop notification");
+    }
+
+    // Otherwise, we need to ask the user for permission
+    else if (Notification.permission !== "denied") {
+      permission = Notification.requestPermission();
+    }
+
+    console.log(Notification.permission);
+    console.log(permission);
+
+    if (permission === "granted" || Notification.permission === "granted") {
+      var notification = new Notification(`Finished ${habit.name}!`);
+    }
+  }
+
   function handleClick() {
     habit.duration -= 1;
     if (habit.duration <= 0) {
       clearInterval(curr_interval);
       habit.complete = true;
+
+      triggerNotification();
     } else {
       habit.complete = false;
     }
@@ -53,7 +81,7 @@
 
 <div class={!habit.complete ? incompleteStyle : completeStyle}>
   <input class="center" bind:value={habit.name} />
-  <span class="center">duration (seconds):</span>
+  <span class="center">duration (secs):</span>
   <input
     class="center"
     size="2"
