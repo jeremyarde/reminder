@@ -20,9 +20,11 @@ jobs:
         node-version: [12.x]
 
     steps:
+    - run: dir
+    - run: cd ~ && dir
     - run: curl -o- -L https://yarnpkg.com/install.sh | bash
-    - run: cd frontend && yarn install
-    - run: cd frontend && yarn run build 
-    - run: cd frontend/src-tauri/target/release/habitreminder.exe
+    - run: cd ~/frontend && yarn install
+    - run: cd ~/frontend && yarn run build 
+    - run: cd ~/frontend/src-tauri/target/release/habitreminder.exe
       env:
         CI: true
