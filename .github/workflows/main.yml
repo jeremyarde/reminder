@@ -21,6 +21,7 @@ jobs:
 
     steps:
     - name: Install 
+    - uses: actions/checkout@v2
     - run: dir
     - run: cd .. && dir
     - run: cd ../reminder/frontend
