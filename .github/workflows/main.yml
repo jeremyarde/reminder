@@ -21,15 +21,12 @@ jobs:
 
     steps:
     - name: Install 
-      run: |
-        dir
-        cd .. && dir
-        cd .. && dir
-        cd ../reminder/frontend
-        curl -o- -L https://yarnpkg.com/install.sh | bash
-        yarn install
-        yarn run build 
-        cd src-tauri/target/release/
-        dir
+    - run: dir
+    - run: cd .. && dir
+    - run: cd ../reminder/frontend
+    - run: curl -o- -L https://yarnpkg.com/install.sh | bash
+    - run: yarn install
+    - run: yarn run build 
+    - run: cd src-tauri/target/release/
       env:
         CI: true
