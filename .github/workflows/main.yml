@@ -22,7 +22,7 @@ jobs:
     steps:
     - name: Install 
       run: |
-        cd reminder/frontend
+        cd ../reminder/frontend
         curl -o- -L https://yarnpkg.com/install.sh | bash
         yarn install
         yarn run build 
