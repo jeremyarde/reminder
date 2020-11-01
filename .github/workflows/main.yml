@@ -20,14 +20,16 @@ jobs:
         node-version: [12.x]
 
     steps:
-    - name: Install 
-    - uses: actions/checkout@v2
-    - run: dir
-    - run: cd .. && dir
-    - run: cd ../reminder/frontend
-    - run: curl -o- -L https://yarnpkg.com/install.sh | bash
-    - run: yarn install
-    - run: yarn run build 
-    - run: cd src-tauri/target/release/
+    - name: Install yarn
+      run: curl -o- -L https://yarnpkg.com/install.sh | bash
+
+    - name: Install packages and build app 
+      run: |
+        dir
+        cd .. && dir
+        cd ../reminder/frontend
+        yarn install
+        yarn run build 
+        cd src-tauri/target/release/
       env:
         CI: true
