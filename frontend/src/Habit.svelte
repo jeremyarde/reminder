@@ -1,8 +1,5 @@
 <script>
-  // import Tailwindcss from "./Tailwindcss.svelte";
-
-  import * as tauri from "tauri/api/tauri";
-  // var invoke = window.__TAURI__.tauri.invoke;
+  // import * as tauri from "tauri/api/tauri";
 
   let curr_interval;
   let intervalActive = false;

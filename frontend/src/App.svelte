@@ -30,29 +30,18 @@
   }
 
   function addHabit() {
-    // habits = [...habits, new Habit()];
     let newHabit = new Habit();
     habits.set(newHabit.id, newHabit);
-    // habit = habit.set();
-    console.log(habits);
-    // console.log([...habits]);
-    console.log(Array.from(habits.values()));
     updateHabitView();
   }
 
   function resetHabits() {
     habits = new Map();
-    console.log(habits);
     updateHabitView();
   }
 
   function deleteHabit(habitId) {
-    // console.log();
-    // habits = habits.splice(index);
     habits.delete(habitId);
-    console.log(habitId);
-    console.log("deleteHabit");
-    console.log(habits);
     updateHabitView();
   }
 
