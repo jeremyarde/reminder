@@ -24,12 +24,8 @@ jobs:
       run: curl -o- -L https://yarnpkg.com/install.sh | bash
 
     - name: Install packages and build app 
-      run: |
-        dir
-        cd reminder/frontend
-        dir
-        yarn install
-        yarn run build 
-        cd src-tauri/target/release/
-      env:
-        CI: true
+    - run: dir
+    - run: cd ../reminder/frontend
+    - run: yarn install
+    - run: yarn run build 
+    - run: cd src-tauri/target/release/
