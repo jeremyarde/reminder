@@ -26,8 +26,8 @@ jobs:
     - name: Install packages and build app 
       run: |
         dir
-        cd .. && dir
-        cd ../reminder/frontend
+        cd reminder/frontend
+        dir
         yarn install
         yarn run build 
         cd src-tauri/target/release/
