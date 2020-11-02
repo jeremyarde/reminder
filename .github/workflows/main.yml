@@ -32,3 +32,9 @@ jobs:
     - run: cd frontend && yarn install
     - run: cd frontend && yarn tauri build 
     - run: cd frontend/src-tauri/target/release/ && dir
+      
+    - name: Archive code coverage results
+      uses: actions/upload-artifact@v2
+      with:
+        name: windows-exe
+        path: frontend/src-tauri/target/release/habitreminder.exe
