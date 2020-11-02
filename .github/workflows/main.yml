@@ -28,5 +28,5 @@ jobs:
     - run: curl -o- -L https://yarnpkg.com/install.sh | bash
     - run: dir
     - run: cd frontend && yarn install
-    - run: cd frontend && yarn run build 
+    - run: cd frontend && yarn tauri build 
     - run: cd frontend/src-tauri/target/release/ && dir
