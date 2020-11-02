@@ -1,35 +1,29 @@
 <script>
-  // import * as tauri from "tauri/api/tauri";
-
   let curr_interval;
   let intervalActive = false;
 
   export let habit;
   export let handleDelete;
 
-  function triggerNotification() {
-    // tauri.invoke({
-    //       cmd: "myCustomCommand",
-    //       arg: "My messages from JS",
-    //     });
-    let permission;
+  // function triggerNotification() {
+  //   let permission;
 
-    if (!("Notification" in window)) {
-      alert("This browser does not support desktop notification");
-    }
+  //   if (!("Notification" in window)) {
+  //     alert("This browser does not support desktop notification");
+  //   }
 
-    // Otherwise, we need to ask the user for permission
-    else if (Notification.permission !== "denied") {
-      permission = Notification.requestPermission();
-    }
+  //   // Otherwise, we need to ask the user for permission
+  //   else if (Notification.permission !== "denied") {
+  //     permission = Notification.requestPermission();
+  //   }
 
-    console.log(Notification.permission);
-    console.log(permission);
+  //   console.log(Notification.permission);
+  //   console.log(permission);
 
-    if (permission === "granted" || Notification.permission === "granted") {
-      var notification = new Notification(`Finished ${habit.name}!`);
-    }
-  }
+  //   if (permission === "granted" || Notification.permission === "granted") {
+  //     var notification = new Notification(`Finished ${habit.name}!`);
+  //   }
+  // }
 
   function handleClick() {
     habit.duration -= 1;
@@ -37,7 +31,7 @@
       clearInterval(curr_interval);
       habit.complete = true;
 
-      triggerNotification();
+      // triggerNotification();
     } else {
       habit.complete = false;
     }

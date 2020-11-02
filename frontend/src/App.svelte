@@ -2,6 +2,7 @@
   import Tailwindcss from "./Tailwindcss.svelte";
   import HabitView from "./Habit.svelte";
   import { onMount, onDestroy } from "svelte";
+  import { forage } from "@tauri-apps/tauri-forage";
 
   let habits = loadHabits();
   let habitView = [];
