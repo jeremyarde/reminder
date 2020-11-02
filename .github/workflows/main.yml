@@ -27,7 +27,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: curl -o- -L https://yarnpkg.com/install.sh | bash
     - run: dir
-#     - run: cargo install cargo-tauri-bundle
+    - run: cargo install tauri-bundler --force
     - run: yarn add tauri
     - run: cd frontend && yarn install
     - run: cd frontend && yarn tauri build 
