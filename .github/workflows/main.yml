@@ -20,10 +20,12 @@ jobs:
         node-version: [12.x]
 
     steps:
-    - name: Install yarn
-      run: curl -o- -L https://yarnpkg.com/install.sh | bash
-
-    - name: Install packages and build app 
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: curl -o- -L https://yarnpkg.com/install.sh | bash
     - run: dir
     - run: cd ../reminder/frontend
     - run: yarn install
