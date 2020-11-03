@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   let curr_interval;
   let intervalActive = false;
 
@@ -90,7 +90,9 @@
     type="text"
     bind:value={habit.duration}
     min="1"
-    max="20000" />
+    max="86400"
+    pattern="[0-9]*"
+    title="Please use a number between 1 and 86,400" />
   <button class={buttonCss} on:click={startPauseHabit}>
     {intervalActive == false ? 'Start' : 'Pause'}
   </button>

@@ -1,84 +1,81 @@
-<script>
+<script lang="ts">
   import Tailwindcss from "./Tailwindcss.svelte";
   import HabitView from "./Habit.svelte";
   import { onMount, onDestroy } from "svelte";
-  import { forage } from "@tauri-apps/tauri-forage";
+  import * as forage from "localforage";
 
-  let habits = loadHabits();
-  let habitView = [];
-  updateHabitView();
-
-  // import Habit from "./Habit.svelte";
-
-  // if (typeof Storage !== "undefined") {
-  //   // Code for localStorage/sessionStorage.
-  //   console.log("we have localstorage");
-  // } else {
-  //   console.log("we have no storage support");
+  // interface IHabit {
+  //   id: string;
+  //   name: string;
+  //   duration: number;
+  //   hitCount: number;
+  //   complete: boolean;
   // }
 
-  onMount(async () => {
-    console.log("onMount triggered");
-    loadHabits();
-  });
-
-  // onDestroy(async () => {
-  //   console.log("onDestroy triggered");
-  //   saveHabits();
-  // });
-
-  function saveHabits() {
-    // if (typeof Storage !== "undefined") {
-    //   // Code for localStorage/sessionStorage.
-    //   console.log("we have localstorage");
-    // } else {
-    //   console.log("we have no storage support");
-    // }
-
-    console.log("Saving habits");
-    // console.log([...habits.values()]);
-    // console.log(JSON.stringify(habits.entries()));
-    localStorage.setItem("habits", JSON.stringify([...habits.values()]));
-  }
-
-  function loadHabits() {
-    let habitMap;
-
-    console.log("Loading habits");
-    let loadedHabits = localStorage.getItem("habits");
-
-    // loadedHabits.forEach((element) => {});
-    // (element) => {
-    //   JSON.parse(element);
-    // };
-    console.log(loadedHabits);
-    console.log(JSON.parse(loadedHabits));
-    loadedHabits = JSON.parse(loadedHabits);
-    console.log("is habits a map?");
-
-    console.log(loadedHabits !== typeof Map);
-    if (loadedHabits === null) {
-      habitMap = new Map();
-    } else if (typeof loadHabits === typeof Array) {
-      console.log("is list");
-      habitMap = new Map();
-      loadedHabits.forEach((element) => {
-        habitMap.set(element.id, element);
-      });
-    }
-
-    console.log(habitMap);
-    return habitMap;
-  }
-
   class Habit {
-    constructor() {
+    id: string;
+    name: string;
+    duration: number;
+    hitCount: number;
+    complete: boolean;
+
+    public constructor() {
       this.id = create_UUID();
       this.name = "";
       this.duration = 5 * 60;
       this.hitCount = 0;
       this.complete = false;
     }
+  }
+
+  forage.config({ name: "HabitReminder" });
+
+  let habits: Map<string, Habit>;
+  let habitView: Array<Habit> = [];
+
+  onMount(async () => {
+    console.log("onMount triggered");
+    habits = await loadHabits();
+    await updateHabitView();
+  });
+
+  async function saveHabits() {
+    console.log("Saving habits");
+    await forage.setItem("habits", JSON.stringify([...habits.values()]));
+  }
+
+  async function loadHabits(): Promise<Map<string, Habit>> {
+    let habitMap: Map<string, Habit> = new Map();
+
+    console.log("Loading habits");
+
+    let loadedHabits: Array<Habit>;
+
+    await forage
+      .getItem<string>("habits")
+      .then((value) => {
+        loadedHabits = JSON.parse(value);
+        if (loadedHabits.length != 0) {
+          for (let val of loadedHabits) {
+            habitMap.set(val.id, val);
+          }
+        } else {
+          habitMap = new Map();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        loadedHabits = new Array();
+        habitMap = new Map();
+      });
+
+    console.log("Loaded objects:");
+    console.log("loadedHabits:");
+    console.log(loadedHabits);
+    console.log("HabitMap:");
+    console.log(habitMap);
+
+    return habitMap;
   }
 
   function create_UUID() {
@@ -96,12 +93,14 @@
 
   function addHabit() {
     let newHabit = new Habit();
+    console.log("addHabit");
+    console.log(habits);
     habits.set(newHabit.id, newHabit);
     updateHabitView();
   }
 
-  function resetHabits() {
-    localStorage.removeItem("habits");
+  async function resetHabits() {
+    await forage.removeItem("habits");
     habits = new Map();
     updateHabitView();
   }
