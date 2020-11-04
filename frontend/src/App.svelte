@@ -1,25 +1,11 @@
-<script lang="ts">
+<script>
   import Tailwindcss from "./Tailwindcss.svelte";
   import HabitView from "./Habit.svelte";
-  import { onMount, onDestroy } from "svelte";
-  import * as forage from "localforage";
-
-  // interface IHabit {
-  //   id: string;
-  //   name: string;
-  //   duration: number;
-  //   hitCount: number;
-  //   complete: boolean;
-  // }
+  import { onMount } from "svelte";
+  import localforage from "localforage";
 
   class Habit {
-    id: string;
-    name: string;
-    duration: number;
-    hitCount: number;
-    complete: boolean;
-
-    public constructor() {
+    constructor() {
       this.id = create_UUID();
       this.name = "";
       this.duration = 5 * 60;
@@ -28,10 +14,10 @@
     }
   }
 
-  forage.config({ name: "HabitReminder" });
+  // localforage.config({ name: "HabitReminder" });
 
-  let habits: Map<string, Habit>;
-  let habitView: Array<Habit> = [];
+  let habits;
+  let habitView = [];
 
   onMount(async () => {
     console.log("onMount triggered");
@@ -41,18 +27,18 @@
 
   async function saveHabits() {
     console.log("Saving habits");
-    await forage.setItem("habits", JSON.stringify([...habits.values()]));
+    await localforage.setItem("habits", JSON.stringify([...habits.values()]));
   }
 
-  async function loadHabits(): Promise<Map<string, Habit>> {
-    let habitMap: Map<string, Habit> = new Map();
+  async function loadHabits() {
+    let habitMap = new Map();
 
     console.log("Loading habits");
 
-    let loadedHabits: Array<Habit>;
+    let loadedHabits;
 
-    await forage
-      .getItem<string>("habits")
+    await localforage
+      .getItem("habits")
       .then((value) => {
         loadedHabits = JSON.parse(value);
         if (loadedHabits.length != 0) {
@@ -100,7 +86,7 @@
   }
 
   async function resetHabits() {
-    await forage.removeItem("habits");
+    await localforage.removeItem("habits");
     habits = new Map();
     updateHabitView();
   }
@@ -117,7 +103,7 @@
   }
 </script>
 
-<main>
+<main charset="UTF-8">
   {#each habitView as habit}
     <HabitView {habit} handleDelete={deleteHabit} />
   {/each}

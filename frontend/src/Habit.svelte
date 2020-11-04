@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
   let curr_interval;
   let intervalActive = false;
 

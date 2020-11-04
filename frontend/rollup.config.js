@@ -5,7 +5,6 @@ import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import sveltePreprocess from 'svelte-preprocess';
 import autoPreprocess from 'svelte-preprocess';
-import typescript from '@rollup/plugin-typescript';
 
 
 const production = !process.env.ROLLUP_WATCH;
@@ -32,7 +31,7 @@ function serve() {
 }
 
 export default {
-	input: 'src/main.ts',
+	input: 'src/main.js',
 	output: {
 		sourcemap: true,
 		format: 'iife',
@@ -50,9 +49,6 @@ export default {
 				css.write('bundle.css');
 			}
 		}),
-
-		typescript({ sourceMap: !production }),
-
 		// If you have external dependencies installed from
 		// npm, you'll most likely need these plugins. In
 		// some cases you'll need additional configuration -
@@ -62,8 +58,9 @@ export default {
 			browser: true,
 			dedupe: ['svelte']
 		}),
-		commonjs(),
-
+		commonjs({
+			include: ['node_modules/localforage/**']
+		}),
 		// In dev mode, call `npm run start` once
 		// the bundle has been generated
 		!production && serve(),
