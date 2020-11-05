@@ -4,13 +4,19 @@
   import { onMount } from "svelte";
   import localforage from "localforage";
 
+  const habitState = {
+    COMPLETE: "complete",
+    ALMOSTCOMPLETE: "almostComplete",
+    INCOMPLETE: "incomplete",
+  };
+
   class Habit {
     constructor() {
       this.id = create_UUID();
       this.name = "";
       this.duration = 5 * 60;
       this.hitCount = 0;
-      this.complete = false;
+      this.habitState = habitState.INCOMPLETE;
     }
   }
 

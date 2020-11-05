@@ -2,42 +2,84 @@
   let curr_interval;
   let intervalActive = false;
 
+  document.onkeydown = function (event) {
+    console.log(event);
+    if (event.key == "Enter") {
+      startPauseHabit();
+    } else if (event.key == "Backspace") {
+      handleDelete(habit.id);
+    }
+  };
+
   export let habit;
   export let handleDelete;
 
-  // function triggerNotification() {
-  //   let permission;
+  let incompleteStyle =
+    "flex justify-center flex-wrap m-2 bg-green-200 rounded relative border";
+  let almostCompleteStyle =
+    "flex justify-center flex-wrap m-2 bg-yellow-200 rounded relative border";
 
-  //   if (!("Notification" in window)) {
-  //     alert("This browser does not support desktop notification");
-  //   }
+  let completeStyle =
+    "flex justify-center flex-wrap m-2 bg-red-100 border border-red-400 text-red-700 px-2 rounded relative";
+  // let completeStyle =
+  //   "flex justify-center flex-wrap m-2 bg-red-200 rounded relative border";
 
-  //   // Otherwise, we need to ask the user for permission
-  //   else if (Notification.permission !== "denied") {
-  //     permission = Notification.requestPermission();
-  //   }
+  const habitState = {
+    COMPLETE: "complete",
+    ALMOSTCOMPLETE: "almostComplete",
+    INCOMPLETE: "incomplete",
+  };
 
-  //   console.log(Notification.permission);
-  //   console.log(permission);
+  let habitStateCss = new Map();
+  habitStateCss.set(habitState.COMPLETE, completeStyle);
+  habitStateCss.set(habitState.INCOMPLETE, incompleteStyle);
+  habitStateCss.set(habitState.ALMOSTCOMPLETE, almostCompleteStyle);
 
-  //   if (permission === "granted" || Notification.permission === "granted") {
-  //     var notification = new Notification(`Finished ${habit.name}!`);
-  //   }
-  // }
+  function triggerNotification() {
+    let permission;
 
-  function handleClick() {
-    habit.duration -= 1;
-    if (habit.duration <= 0) {
-      clearInterval(curr_interval);
-      habit.complete = true;
+    if (!("Notification" in window)) {
+      alert("This browser does not support desktop notification");
+    }
 
-      // triggerNotification();
-    } else {
-      habit.complete = false;
+    // Otherwise, we need to ask the user for permission
+    else if (Notification.permission !== "denied") {
+      permission = Notification.requestPermission();
+    }
+
+    console.log(Notification.permission);
+    console.log(permission);
+
+    if (permission === "granted" || Notification.permission === "granted") {
+      var notification = new Notification(`Finished ${habit.name}!`);
     }
   }
 
+  function handleClick() {
+    console.log("handleClick");
+
+    habit.duration -= 1;
+
+    if (habit.duration <= 0) {
+      clearInterval(curr_interval);
+      habit.habitState = habitState.COMPLETE;
+      triggerNotification();
+      // console.log("habitState = complete");
+    } else if (habit.duration <= habit.prevDuration / 3 && habit.duration > 0) {
+      habit.habitState = habitState.ALMOSTCOMPLETE;
+      // console.log("habitState = almostcomplete");
+    } else {
+      // console.log("habitState = incomplete");
+      habit.habitState = habitState.INCOMPLETE;
+    }
+
+    console.log(habit);
+    // habit = habit;
+    // console.log(currHabitStateCss);
+  }
+
   function startPauseHabit() {
+    console.log("startPauseHabit");
     if (intervalActive == true) {
       // pausing
       clearInterval(curr_interval);
@@ -48,20 +90,17 @@
       curr_interval = setInterval(handleClick, 1000);
       intervalActive = true;
     }
+    // habit = habit;
   }
 
   function resetHabit() {
+    console.log("resetHabit function");
     clearInterval(curr_interval);
     intervalActive = false;
     habit.duration = habit.prevDuration;
-    habit.complete = false;
+    habit.habitState = habitState.INCOMPLETE;
+    // habit = habit;
   }
-
-  let incompleteStyle =
-    "flex justify-center flex-wrap m-2 bg-green-200 rounded relative border";
-
-  let completeStyle =
-    "flex  justify-center flex-wrap m-2 bg-red-100 border border-red-400 text-red-700 px-2 rounded relative";
 
   let buttonCss =
     "bg-transparent hover:bg-yellow-100 text-grey font-semibold py-2 px-3 border-grey rounded m-2";
@@ -81,7 +120,7 @@
   }
 </style>
 
-<div class={!habit.complete ? incompleteStyle : completeStyle}>
+<div class={habitStateCss.get(habit.habitState)}>
   <input class="center" bind:value={habit.name} />
   <span class="center">duration (secs):</span>
   <input
@@ -93,7 +132,12 @@
     max="86400"
     pattern="[0-9]*"
     title="Please use a number between 1 and 86,400" />
-  <button class={buttonCss} on:click={startPauseHabit}>
+  <button
+    class={buttonCss}
+    on:click={startPauseHabit}
+    onkeypress={(x) => {
+      console.log(x);
+    }}>
     {intervalActive == false ? 'Start' : 'Pause'}
   </button>
 
