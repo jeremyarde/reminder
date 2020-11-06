@@ -44,8 +44,11 @@ jobs:
       with:
         toolchain: stable
 
+#     - name: install tauri bundler
+#       run: cargo install tauri-bundler --force
+
     - name: install tauri bundler
-      run: cargo install tauri-bundler --force
+      run: yarn add
 
     - name: install webkit2gtk (ubuntu only)
       if: matrix.platform == 'ubuntu-latest'
@@ -66,6 +69,7 @@ jobs:
         prerelease: false
         projectPath: "frontend/"
         distPath: "public/"
+        configPath: "frontend/src-tauri"
         
         
 #   create-release:
