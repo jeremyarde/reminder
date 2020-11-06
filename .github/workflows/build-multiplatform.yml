@@ -60,7 +60,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: windows-exe
-        path: frontend/src-tauri/target/release/bundle/msi/habitreminder*.msi
+        path: frontend/src-tauri/target/release/bundle/*
         
 #     - name: install app dependencies and build it
 #       run: cd frontend && yarn && yarn build
