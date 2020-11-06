@@ -54,7 +54,7 @@ jobs:
         sudo apt-get install -y webkit2gtk-4.0
     
     - name: Build application
-      run: cd frontend && yarn tauri build     
+      run: cd frontend && yarn && yarn add tauri && yarn tauri build     
         
     - name: Upload build
       uses: actions/upload-artifact@v2
