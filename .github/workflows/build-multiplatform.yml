@@ -54,7 +54,7 @@ jobs:
           sudo apt-get install -y webkit2gtk-4.0
 
       - name: Build application
-        run: cd frontend && yarn && yarn add tauri && cat src-tauri/tauri.conf.json && yarn tauri build
+        run: cd frontend && yarn && yarn add tauri && yarn tauri build
 
       # - name: Upload build
       #   uses: actions/upload-artifact@v2
@@ -63,6 +63,7 @@ jobs:
       #     path: frontend/src-tauri/target/release/bundle/*
 
       - name: Create release
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
