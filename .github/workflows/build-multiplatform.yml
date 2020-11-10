@@ -86,7 +86,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: release
-          path: frontend/src-tauri/target/release/bundle/release.zip frontend/src-tauri/target/release/bundle/*
+          path: frontend/src-tauri/target/release/bundle/*
 
       # - name: Upload Release Asset
       #   id: upload-release-asset
