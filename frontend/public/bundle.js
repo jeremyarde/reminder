@@ -488,10 +488,10 @@ var app = (function () {
     			t7 = space();
     			button2 = element("button");
     			button2.textContent = "Delete";
-    			attr_dev(input0, "class", "center neumorphInputField svelte-n7ziam");
+    			attr_dev(input0, "class", "center neumorphInputField svelte-bkjbx");
     			attr_dev(input0, "placeholder", "Habit Name");
-    			add_location(input0, file, 196, 2, 4991);
-    			attr_dev(input1, "class", "center neumorphInputField svelte-n7ziam");
+    			add_location(input0, file, 200, 2, 5199);
+    			attr_dev(input1, "class", "center neumorphInputField svelte-bkjbx");
     			attr_dev(input1, "size", "2");
     			attr_dev(input1, "type", "text");
     			attr_dev(input1, "placeholder", "900");
@@ -499,18 +499,18 @@ var app = (function () {
     			attr_dev(input1, "max", "86400");
     			attr_dev(input1, "pattern", "[0-9]*");
     			attr_dev(input1, "title", "Please use a number between 1 and 86,400");
-    			add_location(input1, file, 201, 2, 5151);
-    			attr_dev(span, "class", "textCenter svelte-n7ziam");
-    			add_location(span, file, 211, 2, 5396);
-    			attr_dev(button0, "class", "neumorphButton svelte-n7ziam");
+    			add_location(input1, file, 205, 2, 5359);
+    			attr_dev(span, "class", "mr-4 pt-3");
+    			add_location(span, file, 215, 2, 5604);
+    			attr_dev(button0, "class", "neumorphButton svelte-bkjbx");
     			attr_dev(button0, "onkeypress", button0_onkeypress_value = /*func*/ ctx[8]);
-    			add_location(button0, file, 212, 2, 5439);
-    			attr_dev(button1, "class", "neumorphButton svelte-n7ziam");
-    			add_location(button1, file, 222, 2, 5660);
-    			attr_dev(button2, "class", "neumorphButton svelte-n7ziam");
-    			add_location(button2, file, 223, 2, 5731);
-    			attr_dev(div, "class", div_class_value = "" + (null_to_empty(/*habitStateCss*/ ctx[3].get(/*habit*/ ctx[0].habitState)) + " svelte-n7ziam"));
-    			add_location(div, file, 194, 0, 4896);
+    			add_location(button0, file, 216, 2, 5646);
+    			attr_dev(button1, "class", "neumorphButton svelte-bkjbx");
+    			add_location(button1, file, 226, 2, 5867);
+    			attr_dev(button2, "class", "neumorphButton svelte-bkjbx");
+    			add_location(button2, file, 227, 2, 5938);
+    			attr_dev(div, "class", div_class_value = "" + (null_to_empty(/*habitStateCss*/ ctx[3].get(/*habit*/ ctx[0].habitState)) + " svelte-bkjbx"));
+    			add_location(div, file, 198, 0, 5104);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -566,7 +566,7 @@ var app = (function () {
 
     			if (dirty & /*intervalActive*/ 4 && t4_value !== (t4_value = (/*intervalActive*/ ctx[2] == false ? "Start" : "Pause") + "")) set_data_dev(t4, t4_value);
 
-    			if (dirty & /*habit*/ 1 && div_class_value !== (div_class_value = "" + (null_to_empty(/*habitStateCss*/ ctx[3].get(/*habit*/ ctx[0].habitState)) + " svelte-n7ziam"))) {
+    			if (dirty & /*habit*/ 1 && div_class_value !== (div_class_value = "" + (null_to_empty(/*habitStateCss*/ ctx[3].get(/*habit*/ ctx[0].habitState)) + " svelte-bkjbx"))) {
     				attr_dev(div, "class", div_class_value);
     			}
     		},
@@ -610,7 +610,7 @@ var app = (function () {
     	let { handleDelete } = $$props;
 
     	let incompleteStyle = // "flex justify-center flex-wrap m-0 bg-green-200 rounded relative border";
-    	"neumorph";
+    	"neumorph flex flex-wrap items-stretch";
 
     	let almostCompleteStyle = // "flex justify-center flex-wrap m-2 bg-yellow-200 rounded relative border";
     	"neumorphAlmost";
@@ -3721,16 +3721,16 @@ var app = (function () {
     			t4 = space();
     			button2 = element("button");
     			button2.textContent = "Save habits";
-    			attr_dev(button0, "class", "neumorphButton svelte-1wqinpc");
-    			add_location(button0, file$1, 131, 4, 3254);
-    			attr_dev(button1, "class", "neumorphButton svelte-1wqinpc");
-    			add_location(button1, file$1, 132, 4, 3331);
-    			attr_dev(button2, "class", "neumorphButton svelte-1wqinpc");
-    			add_location(button2, file$1, 135, 4, 3426);
+    			attr_dev(button0, "class", "neumorphButton svelte-54boap");
+    			add_location(button0, file$1, 131, 4, 3260);
+    			attr_dev(button1, "class", "neumorphButton svelte-54boap");
+    			add_location(button1, file$1, 132, 4, 3337);
+    			attr_dev(button2, "class", "neumorphButton svelte-54boap");
+    			add_location(button2, file$1, 135, 4, 3432);
     			attr_dev(div, "class", "flex justify-center");
-    			add_location(div, file$1, 130, 2, 3215);
+    			add_location(div, file$1, 130, 2, 3221);
     			attr_dev(main, "charset", "UTF-8");
-    			add_location(main, file$1, 126, 0, 3094);
+    			add_location(main, file$1, 126, 0, 3100);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");

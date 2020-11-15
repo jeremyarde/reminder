@@ -17,7 +17,7 @@
 
   let incompleteStyle =
     // "flex justify-center flex-wrap m-0 bg-green-200 rounded relative border";
-    "neumorph";
+    "neumorph flex flex-wrap items-stretch";
   let almostCompleteStyle =
     // "flex justify-center flex-wrap m-2 bg-yellow-200 rounded relative border";
     "neumorphAlmost";
@@ -111,14 +111,15 @@
     /* justify-content: stretch; */
     /* flex: auto; */
     /* justify-content: space-between; */
-    display: flex;
+    /* display: flex; */
     /* align-content: center; */
+    /* flex: auto; */
     border: none;
     padding: 10px;
     margin: 5px;
     border-radius: 12px;
-    background: #ffffff;
-    box-shadow: inset 5px 5px 20px #d9d9d9, inset -5px -5px 20px #ffffff;
+    background: #e6e6e6;
+    box-shadow: inset 5px 5px 20px #757575, inset -5px -5px 20px #c0c0c0;
   }
 
   .neumorphAlmost {
@@ -129,38 +130,40 @@
     padding: 10px;
     margin: 5px;
     border-radius: 12px;
-    background: #ffff00;
-    box-shadow: inset 5px 5px 20px #d9d900, inset -5px -5px 20px #ffff00;
+    background: #fdfdd6;
+    box-shadow: inset 5px 5px 20px #f3e415,
+      inset -5px -5px 20px rgb(251, 253, 150);
   }
 
   .neumorphComplete {
     /* align-content: center; */
     /* content: inherit; */
-    justify-content: stretch;
+    /* justify-content: stretch; */
     border: none;
     padding: 10px;
     margin: 5px;
     border-radius: 12px;
-    background: #ff8080;
-    box-shadow: inset 5px 5px 20px #d96d6d, inset -5px -5px 20px #ff9393;
+    /* background: linear-gradient(145deg, #ff6666, #ff6d6d); */
+    background: #ffcdcd;
+    box-shadow: inset 5px 5px 20px #ff5a5a, inset -5px -5px 20px #ff8a8a;
   }
   /* .neumorph:hover {
     background: linear-gradient(145deg, #c2c2c2, #ffffff);
   } */
 
   .neumorphButton {
-    justify-content: stretch;
+    /* justify-content: stretch; */
     /* flex: inherit; */
-    flex: auto;
+    /* flex: auto; */
     border: none;
-    padding: 6px;
+    padding: 10px;
     margin: 2px;
     border-radius: 12px;
     background: #ffffff;
-    box-shadow: 5px 5px 20px #d9d9d9, -5px -5px 20px #ffffff;
+    /* box-shadow: 0px 0px 0px #d9d9d9, -0px -0px 0px #ffffff; */
   }
   .neumorphButton:hover {
-    background: linear-gradient(145deg, #d3d3d3, #e6e6e6);
+    background: linear-gradient(145deg, #d4d4d4, #ffffff);
   }
 
   .neumorphInputField {
@@ -173,16 +176,17 @@
     margin-right: 10px;
     border-radius: 12px;
     background: #ffffff;
-    box-shadow: 5px 5px 20px #d9d9d9, -5px -5px 20px #ffffff;
+    /* box-shadow: 5px 5px 20px #d9d9d9, -5px -5px 20px #ffffff; */
   }
   .neumorphInputField:hover {
-    background: linear-gradient(145deg, #e4e4e4, #e6e6e6);
+    background: linear-gradient(145deg, #d4d4d4, #ffffff);
   }
   .textCenter {
-    text-align: center;
+    /* text-align: center;
+    justify-content: inherit; */
     /* margin: 0.5em; */
     /* padding: 5px; */
-    margin: auto;
+    /* margin: auto; */
     margin-right: 20px;
     /* border: 3px solid green; */
   }
@@ -207,7 +211,7 @@
     max="86400"
     pattern="[0-9]*"
     title="Please use a number between 1 and 86,400" />
-  <span class="textCenter">seconds</span>
+  <span class="mr-4 pt-3">seconds</span>
   <button
     class="neumorphButton"
     on:click={startPauseHabit}
