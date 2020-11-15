@@ -112,11 +112,11 @@
 <style>
   .neumorphButton {
     border: none;
-    padding: 10px;
+    padding: 5px;
     margin: 5px;
     border-radius: 12px;
     background: linear-gradient(145deg, #d6d6d6, #ffffff);
-    /* box-shadow: 10px 10px 20px #d9d9d9, -10px -10px 20px #ffffff; */
+    box-shadow: 5px 5px 5px #d9d9d9, -5px -5px 5px #ffffff;
   }
   .neumorphButton:hover {
     background: linear-gradient(145deg, #c2c2c2, #ffffff);

@@ -20,10 +20,10 @@
     "neumorph flex flex-wrap items-stretch";
   let almostCompleteStyle =
     // "flex justify-center flex-wrap m-2 bg-yellow-200 rounded relative border";
-    "neumorphAlmost";
+    "neumorphAlmost flex flex-wrap items-stretch";
   let completeStyle =
     // "flex justify-center flex-wrap m-2 bg-red-100 border border-red-400 text-red-700 px-2 rounded relative";
-    "neumorphComplete";
+    "neumorphComplete flex flex-wrap items-stretch";
   const habitState = {
     COMPLETE: "complete",
     ALMOSTCOMPLETE: "almostComplete",
@@ -119,7 +119,7 @@
     margin: 5px;
     border-radius: 12px;
     background: #e6e6e6;
-    box-shadow: inset 5px 5px 20px #757575, inset -5px -5px 20px #c0c0c0;
+    box-shadow: inset 5px 5px 5px #757575, inset -5px -5px 5px #c0c0c0;
   }
 
   .neumorphAlmost {
@@ -131,8 +131,8 @@
     margin: 5px;
     border-radius: 12px;
     background: #fdfdd6;
-    box-shadow: inset 5px 5px 20px #f3e415,
-      inset -5px -5px 20px rgb(251, 253, 150);
+    box-shadow: inset 5px 5px 5px #f3e415,
+      inset -5px -5px 5px rgb(251, 253, 150);
   }
 
   .neumorphComplete {
@@ -145,7 +145,7 @@
     border-radius: 12px;
     /* background: linear-gradient(145deg, #ff6666, #ff6d6d); */
     background: #ffcdcd;
-    box-shadow: inset 5px 5px 20px #ff5a5a, inset -5px -5px 20px #ff8a8a;
+    box-shadow: inset 5px 5px 5px #ff5a5a, inset -5px -5px 5px #ff8a8a;
   }
   /* .neumorph:hover {
     background: linear-gradient(145deg, #c2c2c2, #ffffff);
