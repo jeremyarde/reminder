@@ -43,7 +43,7 @@
     },
     "window": {
       "title": "habitreminder",
-      "width": 750,
+      "width": 760,
       "height": 350,
       "resizable": true,
       "fullscreen": false
