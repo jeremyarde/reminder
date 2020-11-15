@@ -14,7 +14,7 @@
     constructor() {
       this.id = create_UUID();
       this.name = "";
-      this.duration = 5 * 60;
+      this.duration = null;
       this.hitCount = 0;
       this.habitState = habitState.INCOMPLETE;
     }
@@ -109,25 +109,31 @@
   }
 </script>
 
+<style>
+  .neumorphButton {
+    border: none;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 12px;
+    background: linear-gradient(145deg, #e6e6e6, #ffffff);
+    box-shadow: 10px 10px 20px #d9d9d9, -10px -10px 20px #ffffff;
+  }
+  .neumorphButton:hover {
+    background: linear-gradient(145deg, #c2c2c2, #ffffff);
+  }
+</style>
+
+<!-- class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded m-2" -->
+
 <main charset="UTF-8">
   {#each habitView as habit}
     <HabitView {habit} handleDelete={deleteHabit} />
   {/each}
   <div class="flex justify-center">
-    <button
-      class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded m-2"
-      on:click={addHabit}>
-      Create new habit
-    </button>
-    <button
-      class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded m-2"
-      on:click={resetHabits}>
+    <button class="neumorphButton" on:click={addHabit}> New habit </button>
+    <button class="neumorphButton" on:click={resetHabits}>
       Reset habits
     </button>
-    <button
-      class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded m-2"
-      on:click={saveHabits}>
-      Save habits
-    </button>
+    <button class="neumorphButton" on:click={saveHabits}> Save habits </button>
   </div>
 </main>
