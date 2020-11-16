@@ -488,10 +488,10 @@ var app = (function () {
     			t7 = space();
     			button2 = element("button");
     			button2.textContent = "Delete";
-    			attr_dev(input0, "class", "center neumorphInputField svelte-182847z");
+    			attr_dev(input0, "class", "center neumorphInputField svelte-8a99zu");
     			attr_dev(input0, "placeholder", "Habit Name");
-    			add_location(input0, file, 200, 2, 5251);
-    			attr_dev(input1, "class", "center neumorphInputField svelte-182847z");
+    			add_location(input0, file, 202, 2, 5293);
+    			attr_dev(input1, "class", "center neumorphInputField svelte-8a99zu");
     			attr_dev(input1, "size", "2");
     			attr_dev(input1, "type", "text");
     			attr_dev(input1, "placeholder", "900");
@@ -499,18 +499,18 @@ var app = (function () {
     			attr_dev(input1, "max", "86400");
     			attr_dev(input1, "pattern", "[0-9]*");
     			attr_dev(input1, "title", "Please use a number between 1 and 86,400");
-    			add_location(input1, file, 205, 2, 5411);
+    			add_location(input1, file, 207, 2, 5453);
     			attr_dev(span, "class", "mr-4 pt-3");
-    			add_location(span, file, 215, 2, 5656);
-    			attr_dev(button0, "class", "neumorphButton svelte-182847z");
+    			add_location(span, file, 217, 2, 5698);
+    			attr_dev(button0, "class", "neumorphButton svelte-8a99zu");
     			attr_dev(button0, "onkeypress", button0_onkeypress_value = /*func*/ ctx[8]);
-    			add_location(button0, file, 216, 2, 5698);
-    			attr_dev(button1, "class", "neumorphButton svelte-182847z");
-    			add_location(button1, file, 226, 2, 5919);
-    			attr_dev(button2, "class", "neumorphButton svelte-182847z");
-    			add_location(button2, file, 227, 2, 5990);
-    			attr_dev(div, "class", div_class_value = "" + (null_to_empty(/*habitStateCss*/ ctx[3].get(/*habit*/ ctx[0].habitState)) + " svelte-182847z"));
-    			add_location(div, file, 198, 0, 5156);
+    			add_location(button0, file, 218, 2, 5740);
+    			attr_dev(button1, "class", "neumorphButton svelte-8a99zu");
+    			add_location(button1, file, 228, 2, 5961);
+    			attr_dev(button2, "class", "neumorphButton svelte-8a99zu");
+    			add_location(button2, file, 229, 2, 6032);
+    			attr_dev(div, "class", div_class_value = "" + (null_to_empty(/*habitStateCss*/ ctx[3].get(/*habit*/ ctx[0].habitState)) + " svelte-8a99zu"));
+    			add_location(div, file, 200, 0, 5198);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -566,7 +566,7 @@ var app = (function () {
 
     			if (dirty & /*intervalActive*/ 4 && t4_value !== (t4_value = (/*intervalActive*/ ctx[2] == false ? "Start" : "Pause") + "")) set_data_dev(t4, t4_value);
 
-    			if (dirty & /*habit*/ 1 && div_class_value !== (div_class_value = "" + (null_to_empty(/*habitStateCss*/ ctx[3].get(/*habit*/ ctx[0].habitState)) + " svelte-182847z"))) {
+    			if (dirty & /*habit*/ 1 && div_class_value !== (div_class_value = "" + (null_to_empty(/*habitStateCss*/ ctx[3].get(/*habit*/ ctx[0].habitState)) + " svelte-8a99zu"))) {
     				attr_dev(div, "class", div_class_value);
     			}
     		},
@@ -610,13 +610,13 @@ var app = (function () {
     	let { handleDelete } = $$props;
 
     	let incompleteStyle = // "flex justify-center flex-wrap m-0 bg-green-200 rounded relative border";
-    	"neumorph flex flex-wrap items-stretch";
+    	"neumorph flex flex-wrap justify-around";
 
     	let almostCompleteStyle = // "flex justify-center flex-wrap m-2 bg-yellow-200 rounded relative border";
-    	"neumorphAlmost flex flex-wrap items-stretch";
+    	"neumorphAlmost flex flex-wrap justify-around";
 
     	let completeStyle = // "flex justify-center flex-wrap m-2 bg-red-100 border border-red-400 text-red-700 px-2 rounded relative";
-    	"neumorphComplete flex flex-wrap items-stretch";
+    	"neumorphComplete flex flex-wrap justify-around";
 
     	const habitState = {
     		COMPLETE: "complete",

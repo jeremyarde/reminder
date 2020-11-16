@@ -17,13 +17,13 @@
 
   let incompleteStyle =
     // "flex justify-center flex-wrap m-0 bg-green-200 rounded relative border";
-    "neumorph flex flex-wrap items-stretch";
+    "neumorph flex flex-wrap justify-around";
   let almostCompleteStyle =
     // "flex justify-center flex-wrap m-2 bg-yellow-200 rounded relative border";
-    "neumorphAlmost flex flex-wrap items-stretch";
+    "neumorphAlmost flex flex-wrap justify-around";
   let completeStyle =
     // "flex justify-center flex-wrap m-2 bg-red-100 border border-red-400 text-red-700 px-2 rounded relative";
-    "neumorphComplete flex flex-wrap items-stretch";
+    "neumorphComplete flex flex-wrap justify-around";
   const habitState = {
     COMPLETE: "complete",
     ALMOSTCOMPLETE: "almostComplete",
@@ -155,6 +155,7 @@
     /* justify-content: stretch; */
     /* flex: inherit; */
     /* flex: auto; */
+    min-width: 65px;
     border: none;
     padding: 10px;
     margin: 2px;
@@ -169,9 +170,10 @@
   .neumorphInputField {
     justify-content: stretch;
     /* flex: inherit; */
+    max-width: 200px;
     flex: auto;
     border: none;
-    padding: 6px;
+    padding: 2px;
     margin: 0px;
     margin-right: 10px;
     border-radius: 12px;

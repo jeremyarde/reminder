@@ -7,6 +7,12 @@ mod cmd;
 
 fn main() {
   tauri::AppBuilder::new()
+    // .splashscreen_html("<div>Habit Reminder is loading...</div>")
+    // .setup(move |webview, _| {
+    //   let handle = webview.handle();
+    //   // The splashscreen is removed
+    //   tauri::close_splashscreen(&handle);
+    // })
     .invoke_handler(|_webview, arg| {
       use cmd::Cmd::*;
       match serde_json::from_str(arg) {
