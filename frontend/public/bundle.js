@@ -4,6 +4,13 @@ var app = (function () {
     'use strict';
 
     function noop() { }
+    const identity = x => x;
+    function assign(tar, src) {
+        // @ts-ignore
+        for (const k in src)
+            tar[k] = src[k];
+        return tar;
+    }
     function add_location(element, file, line, column, char) {
         element.__svelte_meta = {
             loc: { file, line, column, char }
@@ -27,8 +34,58 @@ var app = (function () {
     function is_empty(obj) {
         return Object.keys(obj).length === 0;
     }
+    function validate_store(store, name) {
+        if (store != null && typeof store.subscribe !== 'function') {
+            throw new Error(`'${name}' is not a store with a 'subscribe' method`);
+        }
+    }
+    function subscribe(store, ...callbacks) {
+        if (store == null) {
+            return noop;
+        }
+        const unsub = store.subscribe(...callbacks);
+        return unsub.unsubscribe ? () => unsub.unsubscribe() : unsub;
+    }
+    function component_subscribe(component, store, callback) {
+        component.$$.on_destroy.push(subscribe(store, callback));
+    }
     function null_to_empty(value) {
         return value == null ? '' : value;
+    }
+
+    const is_client = typeof window !== 'undefined';
+    let now = is_client
+        ? () => window.performance.now()
+        : () => Date.now();
+    let raf = is_client ? cb => requestAnimationFrame(cb) : noop;
+
+    const tasks = new Set();
+    function run_tasks(now) {
+        tasks.forEach(task => {
+            if (!task.c(now)) {
+                tasks.delete(task);
+                task.f();
+            }
+        });
+        if (tasks.size !== 0)
+            raf(run_tasks);
+    }
+    /**
+     * Creates a new task that runs on each raf frame
+     * until it returns a falsy value or is aborted
+     */
+    function loop(callback) {
+        let task;
+        if (tasks.size === 0)
+            raf(run_tasks);
+        return {
+            promise: new Promise(fulfill => {
+                tasks.add(task = { c: callback, f: fulfill });
+            }),
+            abort() {
+                tasks.delete(task);
+            }
+        };
     }
 
     function append(target, node) {
@@ -353,6 +410,10 @@ var app = (function () {
         else
             dispatch_dev("SvelteDOMSetAttribute", { node, attribute, value });
     }
+    function prop_dev(node, property, value) {
+        node[property] = value;
+        dispatch_dev("SvelteDOMSetProperty", { node, property, value });
+    }
     function set_data_dev(text, data) {
         data = '' + data;
         if (text.wholeText === data)
@@ -445,6 +506,162 @@ var app = (function () {
     	}
     }
 
+    const subscriber_queue = [];
+    /**
+     * Create a `Writable` store that allows both updating and reading by subscription.
+     * @param {*=}value initial value
+     * @param {StartStopNotifier=}start start and stop notifications for subscriptions
+     */
+    function writable(value, start = noop) {
+        let stop;
+        const subscribers = [];
+        function set(new_value) {
+            if (safe_not_equal(value, new_value)) {
+                value = new_value;
+                if (stop) { // store is ready
+                    const run_queue = !subscriber_queue.length;
+                    for (let i = 0; i < subscribers.length; i += 1) {
+                        const s = subscribers[i];
+                        s[1]();
+                        subscriber_queue.push(s, value);
+                    }
+                    if (run_queue) {
+                        for (let i = 0; i < subscriber_queue.length; i += 2) {
+                            subscriber_queue[i][0](subscriber_queue[i + 1]);
+                        }
+                        subscriber_queue.length = 0;
+                    }
+                }
+            }
+        }
+        function update(fn) {
+            set(fn(value));
+        }
+        function subscribe(run, invalidate = noop) {
+            const subscriber = [run, invalidate];
+            subscribers.push(subscriber);
+            if (subscribers.length === 1) {
+                stop = start(set) || noop;
+            }
+            run(value);
+            return () => {
+                const index = subscribers.indexOf(subscriber);
+                if (index !== -1) {
+                    subscribers.splice(index, 1);
+                }
+                if (subscribers.length === 0) {
+                    stop();
+                    stop = null;
+                }
+            };
+        }
+        return { set, update, subscribe };
+    }
+
+    function cubicOut(t) {
+        const f = t - 1.0;
+        return f * f * f + 1.0;
+    }
+
+    function is_date(obj) {
+        return Object.prototype.toString.call(obj) === '[object Date]';
+    }
+
+    function get_interpolator(a, b) {
+        if (a === b || a !== a)
+            return () => a;
+        const type = typeof a;
+        if (type !== typeof b || Array.isArray(a) !== Array.isArray(b)) {
+            throw new Error('Cannot interpolate values of different type');
+        }
+        if (Array.isArray(a)) {
+            const arr = b.map((bi, i) => {
+                return get_interpolator(a[i], bi);
+            });
+            return t => arr.map(fn => fn(t));
+        }
+        if (type === 'object') {
+            if (!a || !b)
+                throw new Error('Object cannot be null');
+            if (is_date(a) && is_date(b)) {
+                a = a.getTime();
+                b = b.getTime();
+                const delta = b - a;
+                return t => new Date(a + t * delta);
+            }
+            const keys = Object.keys(b);
+            const interpolators = {};
+            keys.forEach(key => {
+                interpolators[key] = get_interpolator(a[key], b[key]);
+            });
+            return t => {
+                const result = {};
+                keys.forEach(key => {
+                    result[key] = interpolators[key](t);
+                });
+                return result;
+            };
+        }
+        if (type === 'number') {
+            const delta = b - a;
+            return t => a + t * delta;
+        }
+        throw new Error(`Cannot interpolate ${type} values`);
+    }
+    function tweened(value, defaults = {}) {
+        const store = writable(value);
+        let task;
+        let target_value = value;
+        function set(new_value, opts) {
+            if (value == null) {
+                store.set(value = new_value);
+                return Promise.resolve();
+            }
+            target_value = new_value;
+            let previous_task = task;
+            let started = false;
+            let { delay = 0, duration = 400, easing = identity, interpolate = get_interpolator } = assign(assign({}, defaults), opts);
+            if (duration === 0) {
+                if (previous_task) {
+                    previous_task.abort();
+                    previous_task = null;
+                }
+                store.set(value = target_value);
+                return Promise.resolve();
+            }
+            const start = now() + delay;
+            let fn;
+            task = loop(now => {
+                if (now < start)
+                    return true;
+                if (!started) {
+                    fn = interpolate(value, new_value);
+                    if (typeof duration === 'function')
+                        duration = duration(value, new_value);
+                    started = true;
+                }
+                if (previous_task) {
+                    previous_task.abort();
+                    previous_task = null;
+                }
+                const elapsed = now - start;
+                if (elapsed > duration) {
+                    store.set(value = new_value);
+                    return false;
+                }
+                // @ts-ignore
+                store.set(value = fn(easing(elapsed / duration)));
+                return true;
+            });
+            return task.promise;
+        }
+        return {
+            set,
+            update: (fn, opts) => set(fn(target_value, value), opts),
+            subscribe: store.subscribe
+        };
+    }
+
     /* src\Habit.svelte generated by Svelte v3.29.0 */
 
     const { console: console_1 } = globals;
@@ -456,15 +673,15 @@ var app = (function () {
     	let t0;
     	let input1;
     	let t1;
-    	let span;
-    	let t3;
+    	let progress_1;
+    	let t2;
     	let button0;
-    	let t4_value = (/*intervalActive*/ ctx[2] == false ? "Start" : "Pause") + "";
-    	let t4;
+    	let t3_value = (/*intervalActive*/ ctx[2] == false ? "Start" : "Pause") + "";
+    	let t3;
     	let button0_onkeypress_value;
-    	let t5;
+    	let t4;
     	let button1;
-    	let t7;
+    	let t6;
     	let button2;
     	let div_class_value;
     	let mounted;
@@ -477,40 +694,40 @@ var app = (function () {
     			t0 = space();
     			input1 = element("input");
     			t1 = space();
-    			span = element("span");
-    			span.textContent = "seconds";
-    			t3 = space();
+    			progress_1 = element("progress");
+    			t2 = space();
     			button0 = element("button");
-    			t4 = text(t4_value);
-    			t5 = space();
+    			t3 = text(t3_value);
+    			t4 = space();
     			button1 = element("button");
     			button1.textContent = "Reset";
-    			t7 = space();
+    			t6 = space();
     			button2 = element("button");
     			button2.textContent = "Delete";
-    			attr_dev(input0, "class", "center neumorphInputField svelte-8a99zu");
+    			attr_dev(input0, "class", "center neumorphInputField svelte-ftpj83");
     			attr_dev(input0, "placeholder", "Habit Name");
-    			add_location(input0, file, 202, 2, 5293);
-    			attr_dev(input1, "class", "center neumorphInputField svelte-8a99zu");
+    			add_location(input0, file, 264, 2, 7063);
+    			attr_dev(input1, "class", "center neumorphInputField svelte-ftpj83");
     			attr_dev(input1, "size", "2");
     			attr_dev(input1, "type", "text");
-    			attr_dev(input1, "placeholder", "900");
+    			attr_dev(input1, "placeholder", "900 (s)");
     			attr_dev(input1, "min", "1");
     			attr_dev(input1, "max", "86400");
     			attr_dev(input1, "pattern", "[0-9]*");
     			attr_dev(input1, "title", "Please use a number between 1 and 86,400");
-    			add_location(input1, file, 207, 2, 5453);
-    			attr_dev(span, "class", "mr-4 pt-3");
-    			add_location(span, file, 217, 2, 5698);
-    			attr_dev(button0, "class", "neumorphButton svelte-8a99zu");
-    			attr_dev(button0, "onkeypress", button0_onkeypress_value = /*func*/ ctx[8]);
-    			add_location(button0, file, 218, 2, 5740);
-    			attr_dev(button1, "class", "neumorphButton svelte-8a99zu");
-    			add_location(button1, file, 228, 2, 5961);
-    			attr_dev(button2, "class", "neumorphButton svelte-8a99zu");
-    			add_location(button2, file, 229, 2, 6032);
-    			attr_dev(div, "class", div_class_value = "" + (null_to_empty(/*habitStateCss*/ ctx[3].get(/*habit*/ ctx[0].habitState)) + " svelte-8a99zu"));
-    			add_location(div, file, 200, 0, 5198);
+    			add_location(input1, file, 269, 2, 7223);
+    			progress_1.value = /*$progress*/ ctx[3];
+    			attr_dev(progress_1, "class", "svelte-ftpj83");
+    			add_location(progress_1, file, 279, 2, 7472);
+    			attr_dev(button0, "class", "neumorphButton svelte-ftpj83");
+    			attr_dev(button0, "onkeypress", button0_onkeypress_value = /*func*/ ctx[10]);
+    			add_location(button0, file, 281, 2, 7579);
+    			attr_dev(button1, "class", "neumorphButton svelte-ftpj83");
+    			add_location(button1, file, 291, 2, 7800);
+    			attr_dev(button2, "class", "neumorphButton svelte-ftpj83");
+    			add_location(button2, file, 292, 2, 7871);
+    			attr_dev(div, "class", div_class_value = "" + (null_to_empty(/*habitStateCss*/ ctx[5].get(/*habit*/ ctx[0].habitState)) + " svelte-ftpj83"));
+    			add_location(div, file, 262, 0, 6968);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -523,21 +740,21 @@ var app = (function () {
     			append_dev(div, input1);
     			set_input_value(input1, /*habit*/ ctx[0].duration);
     			append_dev(div, t1);
-    			append_dev(div, span);
-    			append_dev(div, t3);
+    			append_dev(div, progress_1);
+    			append_dev(div, t2);
     			append_dev(div, button0);
-    			append_dev(button0, t4);
-    			append_dev(div, t5);
+    			append_dev(button0, t3);
+    			append_dev(div, t4);
     			append_dev(div, button1);
-    			append_dev(div, t7);
+    			append_dev(div, t6);
     			append_dev(div, button2);
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[6]),
-    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[7]),
-    					listen_dev(button0, "click", /*startPauseHabit*/ ctx[4], false, false, false),
-    					listen_dev(button1, "click", /*resetHabit*/ ctx[5], false, false, false),
+    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[8]),
+    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[9]),
+    					listen_dev(button0, "click", /*startPauseHabit*/ ctx[6], false, false, false),
+    					listen_dev(button1, "click", /*resetHabit*/ ctx[7], false, false, false),
     					listen_dev(
     						button2,
     						"click",
@@ -564,9 +781,13 @@ var app = (function () {
     				set_input_value(input1, /*habit*/ ctx[0].duration);
     			}
 
-    			if (dirty & /*intervalActive*/ 4 && t4_value !== (t4_value = (/*intervalActive*/ ctx[2] == false ? "Start" : "Pause") + "")) set_data_dev(t4, t4_value);
+    			if (dirty & /*$progress*/ 8) {
+    				prop_dev(progress_1, "value", /*$progress*/ ctx[3]);
+    			}
 
-    			if (dirty & /*habit*/ 1 && div_class_value !== (div_class_value = "" + (null_to_empty(/*habitStateCss*/ ctx[3].get(/*habit*/ ctx[0].habitState)) + " svelte-8a99zu"))) {
+    			if (dirty & /*intervalActive*/ 4 && t3_value !== (t3_value = (/*intervalActive*/ ctx[2] == false ? "Start" : "Pause") + "")) set_data_dev(t3, t3_value);
+
+    			if (dirty & /*habit*/ 1 && div_class_value !== (div_class_value = "" + (null_to_empty(/*habitStateCss*/ ctx[5].get(/*habit*/ ctx[0].habitState)) + " svelte-ftpj83"))) {
     				attr_dev(div, "class", div_class_value);
     			}
     		},
@@ -591,6 +812,7 @@ var app = (function () {
     }
 
     function instance$1($$self, $$props, $$invalidate) {
+    	let $progress;
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Habit", slots, []);
     	let curr_interval;
@@ -608,6 +830,13 @@ var app = (function () {
 
     	let { habit } = $$props;
     	let { handleDelete } = $$props;
+
+    	// const progress = writable(0);
+    	const progress = tweened(0, { duration: 1000, easing: identity });
+
+    	validate_store(progress, "progress");
+    	component_subscribe($$self, progress, value => $$invalidate(3, $progress = value));
+    	var progress_val = 0;
 
     	let incompleteStyle = // "flex justify-center flex-wrap m-0 bg-green-200 rounded relative border";
     	"neumorph flex flex-wrap justify-around";
@@ -651,6 +880,16 @@ var app = (function () {
     		console.log("handleClick");
     		$$invalidate(0, habit.duration -= 1, habit);
 
+    		// progress.set(habit.duration);
+    		// progress_val += 1;
+    		// await progress.update(progress_val);
+    		// console.log(progress_val);
+    		// progress_val += 1;
+    		progress_val += 1;
+
+    		console.log(progress_val / habit.duration);
+    		progress.set(progress_val / habit.prevDuration);
+
     		if (habit.duration <= 0) {
     			clearInterval(curr_interval);
     			$$invalidate(0, habit.habitState = habitState.COMPLETE, habit);
@@ -685,6 +924,8 @@ var app = (function () {
     		$$invalidate(2, intervalActive = false);
     		$$invalidate(0, habit.duration = habit.prevDuration, habit);
     		$$invalidate(0, habit.habitState = habitState.INCOMPLETE, habit);
+    		progress_val = 0;
+    		progress.set(progress_val);
     	}
 
     	let buttonCss = "bg-transparent hover:bg-yellow-100 text-grey font-semibold py-2 px-3 border-grey rounded m-2";
@@ -717,8 +958,14 @@ var app = (function () {
     	$$self.$capture_state = () => ({
     		curr_interval,
     		intervalActive,
+    		tweened,
+    		cubicOut,
+    		linear: identity,
+    		writable,
     		habit,
     		handleDelete,
+    		progress,
+    		progress_val,
     		incompleteStyle,
     		almostCompleteStyle,
     		completeStyle,
@@ -728,7 +975,8 @@ var app = (function () {
     		handleClick,
     		startPauseHabit,
     		resetHabit,
-    		buttonCss
+    		buttonCss,
+    		$progress
     	});
 
     	$$self.$inject_state = $$props => {
@@ -736,10 +984,11 @@ var app = (function () {
     		if ("intervalActive" in $$props) $$invalidate(2, intervalActive = $$props.intervalActive);
     		if ("habit" in $$props) $$invalidate(0, habit = $$props.habit);
     		if ("handleDelete" in $$props) $$invalidate(1, handleDelete = $$props.handleDelete);
+    		if ("progress_val" in $$props) progress_val = $$props.progress_val;
     		if ("incompleteStyle" in $$props) incompleteStyle = $$props.incompleteStyle;
     		if ("almostCompleteStyle" in $$props) almostCompleteStyle = $$props.almostCompleteStyle;
     		if ("completeStyle" in $$props) completeStyle = $$props.completeStyle;
-    		if ("habitStateCss" in $$props) $$invalidate(3, habitStateCss = $$props.habitStateCss);
+    		if ("habitStateCss" in $$props) $$invalidate(5, habitStateCss = $$props.habitStateCss);
     		if ("buttonCss" in $$props) buttonCss = $$props.buttonCss;
     	};
 
@@ -751,6 +1000,8 @@ var app = (function () {
     		habit,
     		handleDelete,
     		intervalActive,
+    		$progress,
+    		progress,
     		habitStateCss,
     		startPauseHabit,
     		resetHabit,
@@ -3628,7 +3879,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (128:2) {#each habitView as habit}
+    // (167:2) {#each habitView as habit}
     function create_each_block(ctx) {
     	let habitview;
     	let current;
@@ -3672,7 +3923,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(128:2) {#each habitView as habit}",
+    		source: "(167:2) {#each habitView as habit}",
     		ctx
     	});
 
@@ -3714,23 +3965,24 @@ var app = (function () {
     			t0 = space();
     			div = element("div");
     			button0 = element("button");
-    			button0.textContent = "New habit";
+    			button0.textContent = "New";
     			t2 = space();
     			button1 = element("button");
-    			button1.textContent = "Reset habits";
+    			button1.textContent = "Delete All";
     			t4 = space();
     			button2 = element("button");
-    			button2.textContent = "Save habits";
-    			attr_dev(button0, "class", "neumorphButton svelte-1umftb7");
-    			add_location(button0, file$1, 131, 4, 3247);
-    			attr_dev(button1, "class", "neumorphButton svelte-1umftb7");
-    			add_location(button1, file$1, 132, 4, 3324);
-    			attr_dev(button2, "class", "neumorphButton svelte-1umftb7");
-    			add_location(button2, file$1, 135, 4, 3419);
+    			button2.textContent = "Save";
+    			attr_dev(button0, "class", "neumorphButton svelte-1cdv1km");
+    			add_location(button0, file$1, 170, 4, 3915);
+    			attr_dev(button1, "class", "neumorphButton svelte-1cdv1km");
+    			add_location(button1, file$1, 171, 4, 3986);
+    			attr_dev(button2, "class", "neumorphButton svelte-1cdv1km");
+    			add_location(button2, file$1, 172, 4, 4067);
     			attr_dev(div, "class", "flex justify-center");
-    			add_location(div, file$1, 130, 2, 3208);
+    			add_location(div, file$1, 169, 2, 3876);
     			attr_dev(main, "charset", "UTF-8");
-    			add_location(main, file$1, 126, 0, 3087);
+    			attr_dev(main, "class", "mainBG");
+    			add_location(main, file$1, 165, 0, 3740);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3856,6 +4108,7 @@ var app = (function () {
     			this.duration = null;
     			this.hitCount = 0;
     			this.habitState = habitState.INCOMPLETE;
+    			this.prevDuration = null;
     		}
     	}
 

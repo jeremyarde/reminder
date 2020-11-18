@@ -17,6 +17,7 @@
       this.duration = null;
       this.hitCount = 0;
       this.habitState = habitState.INCOMPLETE;
+      this.prevDuration = null;
     }
   }
 
@@ -110,30 +111,65 @@
 </script>
 
 <style>
+  html,
+  body,
+  form,
+  fieldset,
+  table,
+  tr,
+  td,
+  img {
+    margin: 0;
+    padding: 0;
+    font: 100%/150% calibri, helvetica, sans-serif;
+  }
+
   .neumorphButton {
     border: none;
     padding: 5px;
     margin: 5px;
     border-radius: 12px;
-    background: linear-gradient(145deg, #d6d6d6, #ffffff);
-    box-shadow: 5px 5px 5px #d9d9d9, -5px -5px 5px #ffffff;
+    /* background: linear-gradient(145deg, #d6d6d6, #ffffff); */
+    /* box-shadow: 5px 5px 5px #d9d9d9, -5px -5px 5px #ffffff; */
+    box-shadow: 3px 3px 10px #d9d9d9, -3px -3px 10px #ffffff;
   }
   .neumorphButton:hover {
-    background: linear-gradient(145deg, #c2c2c2, #ffffff);
+    /* background: linear-gradient(145deg, #c2c2c2, #ffffff); */
+    background: #d9d9d9;
   }
+
+  :global(body) {
+    background-color: #ebebeb;
+    /* color: #0084f6; */
+    /* transition: background-color 0.3s; */
+  }
+
+  input,
+  button,
+  select,
+  textarea,
+  optgroup,
+  option {
+    font-family: inherit;
+    font-size: inherit;
+    font-style: inherit;
+    font-weight: inherit;
+  }
+  /* :global(body.dark-mode) {
+    background-color: #1d3040;
+    color: #bfc2c7;
+  } */
 </style>
 
 <!-- class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded m-2" -->
 
-<main charset="UTF-8">
+<main charset="UTF-8" class="mainBG">
   {#each habitView as habit}
     <HabitView {habit} handleDelete={deleteHabit} />
   {/each}
   <div class="flex justify-center">
-    <button class="neumorphButton" on:click={addHabit}> New habit </button>
-    <button class="neumorphButton" on:click={resetHabits}>
-      Reset habits
-    </button>
-    <button class="neumorphButton" on:click={saveHabits}> Save habits </button>
+    <button class="neumorphButton" on:click={addHabit}> New </button>
+    <button class="neumorphButton" on:click={resetHabits}> Delete All </button>
+    <button class="neumorphButton" on:click={saveHabits}> Save </button>
   </div>
 </main>

@@ -2,6 +2,10 @@
   let curr_interval;
   let intervalActive = false;
 
+  import { tweened } from "svelte/motion";
+  import { cubicOut, linear } from "svelte/easing";
+  import { writable } from "svelte/store";
+
   document.onkeydown = function (event) {
     console.log(event);
     if (event.key == "Enter") {
@@ -14,6 +18,13 @@
 
   export let habit;
   export let handleDelete;
+
+  // const progress = writable(0);
+  const progress = tweened(0, {
+    duration: 1000,
+    easing: linear,
+  });
+  var progress_val = 0.0;
 
   let incompleteStyle =
     // "flex justify-center flex-wrap m-0 bg-green-200 rounded relative border";
@@ -59,6 +70,16 @@
     console.log("handleClick");
 
     habit.duration -= 1;
+    // progress.set(habit.duration);
+    // progress_val += 1;
+    // await progress.update(progress_val);
+    // console.log(progress_val);
+    // progress_val += 1;
+
+    progress_val += 1;
+
+    console.log(progress_val / habit.duration);
+    progress.set(progress_val / habit.prevDuration);
 
     if (habit.duration <= 0) {
       clearInterval(curr_interval);
@@ -91,6 +112,8 @@
     intervalActive = false;
     habit.duration = habit.prevDuration;
     habit.habitState = habitState.INCOMPLETE;
+    progress_val = 0;
+    progress.set(progress_val);
   }
 
   let buttonCss =
@@ -114,12 +137,20 @@
     /* display: flex; */
     /* align-content: center; */
     /* flex: auto; */
-    border: none;
+    /* border: none;
     padding: 10px;
     margin: 5px;
     border-radius: 12px;
     background: #e6e6e6;
-    box-shadow: inset 5px 5px 5px #757575, inset -5px -5px 5px #c0c0c0;
+    box-shadow: inset 2px 2px 5px #757575, inset -2px -2px 5px #c0c0c0; */
+
+    border: none;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 12px;
+    /* background: linear-gradient(145deg, #d6d6d6, #ffffff); */
+    /* box-shadow: 5px 5px 5px #d9d9d9, -5px -5px 5px #ffffff; */
+    box-shadow: 3px 3px 10px #d9d9d9, -3px -3px 10px #ffffff;
   }
 
   .neumorphAlmost {
@@ -152,36 +183,38 @@
   } */
 
   .neumorphButton {
-    /* justify-content: stretch; */
-    /* flex: inherit; */
-    /* flex: auto; */
-    min-width: 65px;
     border: none;
-    padding: 10px;
-    margin: 2px;
+    padding: 5px;
+    margin: 5px;
     border-radius: 12px;
-    background: #ffffff;
-    /* box-shadow: 0px 0px 0px #d9d9d9, -0px -0px 0px #ffffff; */
+    /* background: linear-gradient(145deg, #d6d6d6, #ffffff); */
+    /* box-shadow: 5px 5px 5px #d9d9d9, -5px -5px 5px #ffffff; */
+    box-shadow: 3px 3px 10px #d9d9d9, -3px -3px 10px #ffffff;
   }
+
   .neumorphButton:hover {
-    background: linear-gradient(145deg, #d4d4d4, #ffffff);
+    /* background: linear-gradient(145deg, #d4d4d4, #ffffff); */
+    background: #d9d9d9;
   }
 
   .neumorphInputField {
     justify-content: stretch;
     /* flex: inherit; */
     max-width: 200px;
+    min-width: 40px;
     flex: auto;
-    border: none;
-    padding: 2px;
-    margin: 0px;
     margin-right: 10px;
+
+    border: none;
+    padding: 5px;
+    margin: 5px;
     border-radius: 12px;
-    background: #ffffff;
-    /* box-shadow: 5px 5px 20px #d9d9d9, -5px -5px 20px #ffffff; */
+    /* background: linear-gradient(145deg, #d6d6d6, #ffffff); */
+    /* box-shadow: 5px 5px 5px #d9d9d9, -5px -5px 5px #ffffff; */
+    box-shadow: 3px 3px 10px #d9d9d9, -3px -3px 10px #ffffff;
   }
   .neumorphInputField:hover {
-    background: linear-gradient(145deg, #d4d4d4, #ffffff);
+    background: #d9d9d9;
   }
   .textCenter {
     /* text-align: center;
@@ -192,6 +225,36 @@
     margin-right: 20px;
     /* border: 3px solid green; */
   }
+
+  progress {
+    -webkit-transition: width 0.5s linear;
+    -moz-transition: width 0.5s linear;
+    -o-transition: width 0.5s linear;
+    transition: width 0.5s linear;
+    /* padding: 5px; */
+    margin: 5px;
+    border-radius: 12px;
+    box-shadow: inset 2px 2px 2px #d9d9d9, inset -2px -2px 2px #ffffff;
+  }
+
+  progress::-webkit-progress-bar {
+    background-color: rgb(83, 83, 75);
+    border-radius: 7px;
+  }
+  progress::-webkit-progress-value {
+    background-color: rgb(255, 251, 0);
+    border-radius: 7px;
+    box-shadow: 1px 1px 5px 3px rgba(255, 0, 0, 0.8);
+  }
+  progress::-moz-progress-bar {
+    /* style rules */
+  }
+
+  /* progress[value] {
+    background-color: #eee;
+    border-radius: 2px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+  } */
 </style>
 
 <!-- class={buttonCss} -->
@@ -207,13 +270,14 @@
     class="center neumorphInputField"
     size="2"
     type="text"
-    placeholder="900"
+    placeholder="900 (s)"
     bind:value={habit.duration}
     min="1"
     max="86400"
     pattern="[0-9]*"
     title="Please use a number between 1 and 86,400" />
-  <span class="mr-4 pt-3">seconds</span>
+  <progress value={$progress} />
+  <!-- <meter value={$progress_val} min={0} max={habit.duration} /> -->
   <button
     class="neumorphButton"
     on:click={startPauseHabit}
