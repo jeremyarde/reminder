@@ -17,3 +17,9 @@ git tag -a vX.X.X -m "release X"
 ```
 git push --tags
 ```
+
+### Styling
+
+#### Resources
+
+https://codepen.io/AdrianBece/pen/YzXppRK
