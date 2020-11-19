@@ -6,6 +6,7 @@
   import { cubicOut, linear } from "svelte/easing";
   import { writable } from "svelte/store";
 
+  // TODO: when two tasks are made, and editting the first one, pressing enter starts the second one
   document.onkeydown = function (event) {
     console.log(event);
     if (event.key == "Enter") {
@@ -19,22 +20,22 @@
   export let habit;
   export let handleDelete;
 
-  // const progress = writable(0);
   const progress = tweened(0, {
     duration: 1000,
     easing: linear,
   });
-  var progress_val = 0.0;
+  var progress_val = 0;
+  var progress_color;
 
   let incompleteStyle =
     // "flex justify-center flex-wrap m-0 bg-green-200 rounded relative border";
     "neumorph flex flex-wrap justify-around";
   let almostCompleteStyle =
     // "flex justify-center flex-wrap m-2 bg-yellow-200 rounded relative border";
-    "neumorphAlmost flex flex-wrap justify-around";
+    "neumorph flex flex-wrap justify-around";
   let completeStyle =
     // "flex justify-center flex-wrap m-2 bg-red-100 border border-red-400 text-red-700 px-2 rounded relative";
-    "neumorphComplete flex flex-wrap justify-around";
+    "neumorph flex flex-wrap justify-around";
   const habitState = {
     COMPLETE: "complete",
     ALMOSTCOMPLETE: "almostComplete",
@@ -84,11 +85,14 @@
     if (habit.duration <= 0) {
       clearInterval(curr_interval);
       habit.habitState = habitState.COMPLETE;
+      progress_color = "progressComplete";
       triggerNotification();
     } else if (habit.duration <= habit.prevDuration / 3 && habit.duration > 0) {
       habit.habitState = habitState.ALMOSTCOMPLETE;
+      progress_color = "progressAlmost";
     } else {
       habit.habitState = habitState.INCOMPLETE;
+      progress_color = "progressIncomplete";
     }
   }
 
@@ -112,6 +116,8 @@
     intervalActive = false;
     habit.duration = habit.prevDuration;
     habit.habitState = habitState.INCOMPLETE;
+    progress_color = "progressIncomplete";
+
     progress_val = 0;
     progress.set(progress_val);
   }
@@ -123,83 +129,45 @@
 <style>
   .center {
     text-align: center;
-    /* margin: 0.5em; */
     margin: auto;
-    /* border: 3px solid green; */
   }
 
   .neumorph {
-    /* align-content: center; */
-    /* content: inherit; */
-    /* justify-content: stretch; */
-    /* flex: auto; */
-    /* justify-content: space-between; */
-    /* display: flex; */
-    /* align-content: center; */
-    /* flex: auto; */
-    /* border: none;
-    padding: 10px;
-    margin: 5px;
-    border-radius: 12px;
-    background: #e6e6e6;
-    box-shadow: inset 2px 2px 5px #757575, inset -2px -2px 5px #c0c0c0; */
-
     border: none;
     padding: 5px;
-    margin: 5px;
-    border-radius: 12px;
-    /* background: linear-gradient(145deg, #d6d6d6, #ffffff); */
-    /* box-shadow: 5px 5px 5px #d9d9d9, -5px -5px 5px #ffffff; */
+    margin: 8px;
+    border-radius: 8px;
     box-shadow: 3px 3px 10px #d9d9d9, -3px -3px 10px #ffffff;
   }
 
   .neumorphAlmost {
-    /* align-content: center; */
-    /* content: inherit; */
-    /* justify-content: stretch; */
     border: none;
     padding: 10px;
     margin: 5px;
-    border-radius: 12px;
-    background: #fdfdd6;
-    box-shadow: inset 5px 5px 5px #f3e415,
-      inset -5px -5px 5px rgb(251, 253, 150);
+    border-radius: 8px;
   }
 
   .neumorphComplete {
-    /* align-content: center; */
-    /* content: inherit; */
-    /* justify-content: stretch; */
     border: none;
     padding: 10px;
     margin: 5px;
-    border-radius: 12px;
-    /* background: linear-gradient(145deg, #ff6666, #ff6d6d); */
-    background: #ffcdcd;
-    box-shadow: inset 5px 5px 5px #ff5a5a, inset -5px -5px 5px #ff8a8a;
+    border-radius: 8px;
   }
-  /* .neumorph:hover {
-    background: linear-gradient(145deg, #c2c2c2, #ffffff);
-  } */
 
   .neumorphButton {
     border: none;
     padding: 5px;
-    margin: 5px;
-    border-radius: 12px;
-    /* background: linear-gradient(145deg, #d6d6d6, #ffffff); */
-    /* box-shadow: 5px 5px 5px #d9d9d9, -5px -5px 5px #ffffff; */
+    margin: 2px;
+    border-radius: 8px;
     box-shadow: 3px 3px 10px #d9d9d9, -3px -3px 10px #ffffff;
   }
 
   .neumorphButton:hover {
-    /* background: linear-gradient(145deg, #d4d4d4, #ffffff); */
     background: #d9d9d9;
   }
 
   .neumorphInputField {
     justify-content: stretch;
-    /* flex: inherit; */
     max-width: 200px;
     min-width: 40px;
     flex: auto;
@@ -208,22 +176,15 @@
     border: none;
     padding: 5px;
     margin: 5px;
-    border-radius: 12px;
-    /* background: linear-gradient(145deg, #d6d6d6, #ffffff); */
-    /* box-shadow: 5px 5px 5px #d9d9d9, -5px -5px 5px #ffffff; */
-    box-shadow: 3px 3px 10px #d9d9d9, -3px -3px 10px #ffffff;
+    border-radius: 8px;
+    background: #ebebeb;
+    box-shadow: inset 2px 2px 2px #d9d9d9, inset -2px -2px 2px #ffffff;
   }
   .neumorphInputField:hover {
     background: #d9d9d9;
   }
   .textCenter {
-    /* text-align: center;
-    justify-content: inherit; */
-    /* margin: 0.5em; */
-    /* padding: 5px; */
-    /* margin: auto; */
     margin-right: 20px;
-    /* border: 3px solid green; */
   }
 
   progress {
@@ -231,33 +192,57 @@
     -moz-transition: width 0.5s linear;
     -o-transition: width 0.5s linear;
     transition: width 0.5s linear;
-    /* padding: 5px; */
+    /* min-width: 40px; */
+    width: 20%;
+    padding: 2px;
     margin: 5px;
-    border-radius: 12px;
+    /* border-radius: 8px; */
     box-shadow: inset 2px 2px 2px #d9d9d9, inset -2px -2px 2px #ffffff;
   }
 
-  progress::-webkit-progress-bar {
-    background-color: rgb(83, 83, 75);
-    border-radius: 7px;
-  }
-  progress::-webkit-progress-value {
-    background-color: rgb(255, 251, 0);
-    border-radius: 7px;
+  /* progress::-webkit-progress-bar {
+    background-color: #50dd33;
+    border-radius: 8px;
     box-shadow: 1px 1px 5px 3px rgba(255, 0, 0, 0.8);
   }
-  progress::-moz-progress-bar {
-    /* style rules */
+  progress::-webkit-progress-value {
+    background-color: #50dd33;
+    border-radius: 8px;
+    /* box-shadow: 1px 1px 5px 3px rgba(255, 0, 0, 0.8); */
+
+  progress.progressIncomplete::-moz-progress-bar,
+  progress.progressIncomplete::-webkit-progress-bar {
+    background-color: #50dd33;
+    /* border-radius: 8px; */
+    /* padding: 5px; */
+    /* margin: 5px; */
   }
 
-  /* progress[value] {
-    background-color: #eee;
-    border-radius: 2px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
-  } */
-</style>
+  progress.progressAlmost::-moz-progress-bar,
+  progress.progressAlmost::-webkit-progress-bar {
+    background-color: #ddda33;
+    /* border-radius: 8px; */
+  }
 
-<!-- class={buttonCss} -->
+  progress.progressComplete::-moz-progress-bar,
+  progress.progressComplete::-webkit-progress-bar {
+    background-color: #ca2727;
+    /* border-radius: 8px; */
+  }
+
+  .float {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 40px;
+    right: 40px;
+    background-color: #0c9;
+    color: #fff;
+    border-radius: 50px;
+    text-align: center;
+    box-shadow: 2px 2px 3px #999;
+  }
+</style>
 
 <div class={habitStateCss.get(habit.habitState)}>
   <!-- <div class="neumorph center"> -->
@@ -276,19 +261,20 @@
     max="86400"
     pattern="[0-9]*"
     title="Please use a number between 1 and 86,400" />
-  <progress value={$progress} />
+  <progress class={progress_color} value={$progress} />
   <!-- <meter value={$progress_val} min={0} max={habit.duration} /> -->
-  <button
-    class="neumorphButton"
-    on:click={startPauseHabit}
-    onkeypress={(x) => {
-      console.log(x);
-      startPauseHabit();
-    }}>
-    {intervalActive == false ? 'Start' : 'Pause'}
-  </button>
-
-  <button class="neumorphButton" on:click={resetHabit}>Reset</button>
-  <button class="neumorphButton" on:click={handleDelete(habit.id)}>Delete
-  </button>
+  <div class="flex">
+    <button
+      class="neumorphButton"
+      on:click={startPauseHabit}
+      onkeypress={(x) => {
+        console.log(x);
+        startPauseHabit();
+      }}>
+      {intervalActive == false ? 'Start' : 'Pause'}
+    </button>
+    <button class="neumorphButton" on:click={resetHabit}>Reset</button>
+    <button class="neumorphButton" on:click={handleDelete(habit.id)}>Delete
+    </button>
+  </div>
 </div>

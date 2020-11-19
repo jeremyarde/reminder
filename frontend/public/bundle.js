@@ -668,13 +668,15 @@ var app = (function () {
     const file = "src\\Habit.svelte";
 
     function create_fragment$1(ctx) {
-    	let div;
+    	let div1;
     	let input0;
     	let t0;
     	let input1;
     	let t1;
     	let progress_1;
+    	let progress_1_class_value;
     	let t2;
+    	let div0;
     	let button0;
     	let t3_value = (/*intervalActive*/ ctx[2] == false ? "Start" : "Pause") + "";
     	let t3;
@@ -683,19 +685,20 @@ var app = (function () {
     	let button1;
     	let t6;
     	let button2;
-    	let div_class_value;
+    	let div1_class_value;
     	let mounted;
     	let dispose;
 
     	const block = {
     		c: function create() {
-    			div = element("div");
+    			div1 = element("div");
     			input0 = element("input");
     			t0 = space();
     			input1 = element("input");
     			t1 = space();
     			progress_1 = element("progress");
     			t2 = space();
+    			div0 = element("div");
     			button0 = element("button");
     			t3 = text(t3_value);
     			t4 = space();
@@ -704,10 +707,10 @@ var app = (function () {
     			t6 = space();
     			button2 = element("button");
     			button2.textContent = "Delete";
-    			attr_dev(input0, "class", "center neumorphInputField svelte-ftpj83");
+    			attr_dev(input0, "class", "center neumorphInputField svelte-9ohqd1");
     			attr_dev(input0, "placeholder", "Habit Name");
-    			add_location(input0, file, 264, 2, 7063);
-    			attr_dev(input1, "class", "center neumorphInputField svelte-ftpj83");
+    			add_location(input0, file, 247, 2, 6324);
+    			attr_dev(input1, "class", "center neumorphInputField svelte-9ohqd1");
     			attr_dev(input1, "size", "2");
     			attr_dev(input1, "type", "text");
     			attr_dev(input1, "placeholder", "900 (s)");
@@ -715,46 +718,49 @@ var app = (function () {
     			attr_dev(input1, "max", "86400");
     			attr_dev(input1, "pattern", "[0-9]*");
     			attr_dev(input1, "title", "Please use a number between 1 and 86,400");
-    			add_location(input1, file, 269, 2, 7223);
-    			progress_1.value = /*$progress*/ ctx[3];
-    			attr_dev(progress_1, "class", "svelte-ftpj83");
-    			add_location(progress_1, file, 279, 2, 7472);
-    			attr_dev(button0, "class", "neumorphButton svelte-ftpj83");
-    			attr_dev(button0, "onkeypress", button0_onkeypress_value = /*func*/ ctx[10]);
-    			add_location(button0, file, 281, 2, 7579);
-    			attr_dev(button1, "class", "neumorphButton svelte-ftpj83");
-    			add_location(button1, file, 291, 2, 7800);
-    			attr_dev(button2, "class", "neumorphButton svelte-ftpj83");
-    			add_location(button2, file, 292, 2, 7871);
-    			attr_dev(div, "class", div_class_value = "" + (null_to_empty(/*habitStateCss*/ ctx[5].get(/*habit*/ ctx[0].habitState)) + " svelte-ftpj83"));
-    			add_location(div, file, 262, 0, 6968);
+    			add_location(input1, file, 252, 2, 6484);
+    			attr_dev(progress_1, "class", progress_1_class_value = "" + (null_to_empty(/*progress_color*/ ctx[3]) + " svelte-9ohqd1"));
+    			progress_1.value = /*$progress*/ ctx[4];
+    			add_location(progress_1, file, 262, 2, 6733);
+    			attr_dev(button0, "class", "neumorphButton svelte-9ohqd1");
+    			attr_dev(button0, "onkeypress", button0_onkeypress_value = /*func*/ ctx[11]);
+    			add_location(button0, file, 265, 4, 6887);
+    			attr_dev(button1, "class", "neumorphButton svelte-9ohqd1");
+    			add_location(button1, file, 274, 4, 7124);
+    			attr_dev(button2, "class", "neumorphButton svelte-9ohqd1");
+    			add_location(button2, file, 275, 4, 7197);
+    			attr_dev(div0, "class", "flex");
+    			add_location(div0, file, 264, 2, 6863);
+    			attr_dev(div1, "class", div1_class_value = "" + (null_to_empty(/*habitStateCss*/ ctx[6].get(/*habit*/ ctx[0].habitState)) + " svelte-9ohqd1"));
+    			add_location(div1, file, 245, 0, 6229);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			append_dev(div, input0);
+    			insert_dev(target, div1, anchor);
+    			append_dev(div1, input0);
     			set_input_value(input0, /*habit*/ ctx[0].name);
-    			append_dev(div, t0);
-    			append_dev(div, input1);
+    			append_dev(div1, t0);
+    			append_dev(div1, input1);
     			set_input_value(input1, /*habit*/ ctx[0].duration);
-    			append_dev(div, t1);
-    			append_dev(div, progress_1);
-    			append_dev(div, t2);
-    			append_dev(div, button0);
+    			append_dev(div1, t1);
+    			append_dev(div1, progress_1);
+    			append_dev(div1, t2);
+    			append_dev(div1, div0);
+    			append_dev(div0, button0);
     			append_dev(button0, t3);
-    			append_dev(div, t4);
-    			append_dev(div, button1);
-    			append_dev(div, t6);
-    			append_dev(div, button2);
+    			append_dev(div0, t4);
+    			append_dev(div0, button1);
+    			append_dev(div0, t6);
+    			append_dev(div0, button2);
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[8]),
-    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[9]),
-    					listen_dev(button0, "click", /*startPauseHabit*/ ctx[6], false, false, false),
-    					listen_dev(button1, "click", /*resetHabit*/ ctx[7], false, false, false),
+    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[9]),
+    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[10]),
+    					listen_dev(button0, "click", /*startPauseHabit*/ ctx[7], false, false, false),
+    					listen_dev(button1, "click", /*resetHabit*/ ctx[8], false, false, false),
     					listen_dev(
     						button2,
     						"click",
@@ -781,20 +787,24 @@ var app = (function () {
     				set_input_value(input1, /*habit*/ ctx[0].duration);
     			}
 
-    			if (dirty & /*$progress*/ 8) {
-    				prop_dev(progress_1, "value", /*$progress*/ ctx[3]);
+    			if (dirty & /*progress_color*/ 8 && progress_1_class_value !== (progress_1_class_value = "" + (null_to_empty(/*progress_color*/ ctx[3]) + " svelte-9ohqd1"))) {
+    				attr_dev(progress_1, "class", progress_1_class_value);
+    			}
+
+    			if (dirty & /*$progress*/ 16) {
+    				prop_dev(progress_1, "value", /*$progress*/ ctx[4]);
     			}
 
     			if (dirty & /*intervalActive*/ 4 && t3_value !== (t3_value = (/*intervalActive*/ ctx[2] == false ? "Start" : "Pause") + "")) set_data_dev(t3, t3_value);
 
-    			if (dirty & /*habit*/ 1 && div_class_value !== (div_class_value = "" + (null_to_empty(/*habitStateCss*/ ctx[5].get(/*habit*/ ctx[0].habitState)) + " svelte-ftpj83"))) {
-    				attr_dev(div, "class", div_class_value);
+    			if (dirty & /*habit*/ 1 && div1_class_value !== (div1_class_value = "" + (null_to_empty(/*habitStateCss*/ ctx[6].get(/*habit*/ ctx[0].habitState)) + " svelte-9ohqd1"))) {
+    				attr_dev(div1, "class", div1_class_value);
     			}
     		},
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
+    			if (detaching) detach_dev(div1);
     			mounted = false;
     			run_all(dispose);
     		}
@@ -818,6 +828,7 @@ var app = (function () {
     	let curr_interval;
     	let intervalActive = false;
 
+    	// TODO: when two tasks are made, and editting the first one, pressing enter starts the second one
     	document.onkeydown = function (event) {
     		console.log(event);
 
@@ -830,22 +841,20 @@ var app = (function () {
 
     	let { habit } = $$props;
     	let { handleDelete } = $$props;
-
-    	// const progress = writable(0);
     	const progress = tweened(0, { duration: 1000, easing: identity });
-
     	validate_store(progress, "progress");
-    	component_subscribe($$self, progress, value => $$invalidate(3, $progress = value));
+    	component_subscribe($$self, progress, value => $$invalidate(4, $progress = value));
     	var progress_val = 0;
+    	var progress_color;
 
     	let incompleteStyle = // "flex justify-center flex-wrap m-0 bg-green-200 rounded relative border";
     	"neumorph flex flex-wrap justify-around";
 
     	let almostCompleteStyle = // "flex justify-center flex-wrap m-2 bg-yellow-200 rounded relative border";
-    	"neumorphAlmost flex flex-wrap justify-around";
+    	"neumorph flex flex-wrap justify-around";
 
     	let completeStyle = // "flex justify-center flex-wrap m-2 bg-red-100 border border-red-400 text-red-700 px-2 rounded relative";
-    	"neumorphComplete flex flex-wrap justify-around";
+    	"neumorph flex flex-wrap justify-around";
 
     	const habitState = {
     		COMPLETE: "complete",
@@ -893,11 +902,14 @@ var app = (function () {
     		if (habit.duration <= 0) {
     			clearInterval(curr_interval);
     			$$invalidate(0, habit.habitState = habitState.COMPLETE, habit);
+    			$$invalidate(3, progress_color = "progressComplete");
     			triggerNotification();
     		} else if (habit.duration <= habit.prevDuration / 3 && habit.duration > 0) {
     			$$invalidate(0, habit.habitState = habitState.ALMOSTCOMPLETE, habit);
+    			$$invalidate(3, progress_color = "progressAlmost");
     		} else {
     			$$invalidate(0, habit.habitState = habitState.INCOMPLETE, habit);
+    			$$invalidate(3, progress_color = "progressIncomplete");
     		}
     	}
 
@@ -924,6 +936,7 @@ var app = (function () {
     		$$invalidate(2, intervalActive = false);
     		$$invalidate(0, habit.duration = habit.prevDuration, habit);
     		$$invalidate(0, habit.habitState = habitState.INCOMPLETE, habit);
+    		$$invalidate(3, progress_color = "progressIncomplete");
     		progress_val = 0;
     		progress.set(progress_val);
     	}
@@ -966,6 +979,7 @@ var app = (function () {
     		handleDelete,
     		progress,
     		progress_val,
+    		progress_color,
     		incompleteStyle,
     		almostCompleteStyle,
     		completeStyle,
@@ -985,10 +999,11 @@ var app = (function () {
     		if ("habit" in $$props) $$invalidate(0, habit = $$props.habit);
     		if ("handleDelete" in $$props) $$invalidate(1, handleDelete = $$props.handleDelete);
     		if ("progress_val" in $$props) progress_val = $$props.progress_val;
+    		if ("progress_color" in $$props) $$invalidate(3, progress_color = $$props.progress_color);
     		if ("incompleteStyle" in $$props) incompleteStyle = $$props.incompleteStyle;
     		if ("almostCompleteStyle" in $$props) almostCompleteStyle = $$props.almostCompleteStyle;
     		if ("completeStyle" in $$props) completeStyle = $$props.completeStyle;
-    		if ("habitStateCss" in $$props) $$invalidate(5, habitStateCss = $$props.habitStateCss);
+    		if ("habitStateCss" in $$props) $$invalidate(6, habitStateCss = $$props.habitStateCss);
     		if ("buttonCss" in $$props) buttonCss = $$props.buttonCss;
     	};
 
@@ -1000,6 +1015,7 @@ var app = (function () {
     		habit,
     		handleDelete,
     		intervalActive,
+    		progress_color,
     		$progress,
     		progress,
     		habitStateCss,
@@ -3968,16 +3984,16 @@ var app = (function () {
     			button0.textContent = "New";
     			t2 = space();
     			button1 = element("button");
-    			button1.textContent = "Delete All";
+    			button1.textContent = "Save";
     			t4 = space();
     			button2 = element("button");
-    			button2.textContent = "Save";
+    			button2.textContent = "Delete All";
     			attr_dev(button0, "class", "neumorphButton svelte-1cdv1km");
     			add_location(button0, file$1, 170, 4, 3915);
     			attr_dev(button1, "class", "neumorphButton svelte-1cdv1km");
     			add_location(button1, file$1, 171, 4, 3986);
     			attr_dev(button2, "class", "neumorphButton svelte-1cdv1km");
-    			add_location(button2, file$1, 172, 4, 4067);
+    			add_location(button2, file$1, 172, 4, 4060);
     			attr_dev(div, "class", "flex justify-center");
     			add_location(div, file$1, 169, 2, 3876);
     			attr_dev(main, "charset", "UTF-8");
@@ -4006,8 +4022,8 @@ var app = (function () {
     			if (!mounted) {
     				dispose = [
     					listen_dev(button0, "click", /*addHabit*/ ctx[2], false, false, false),
-    					listen_dev(button1, "click", /*resetHabits*/ ctx[3], false, false, false),
-    					listen_dev(button2, "click", /*saveHabits*/ ctx[1], false, false, false)
+    					listen_dev(button1, "click", /*saveHabits*/ ctx[1], false, false, false),
+    					listen_dev(button2, "click", /*resetHabits*/ ctx[3], false, false, false)
     				];
 
     				mounted = true;

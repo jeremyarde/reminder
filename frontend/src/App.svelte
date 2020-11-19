@@ -169,7 +169,7 @@
   {/each}
   <div class="flex justify-center">
     <button class="neumorphButton" on:click={addHabit}> New </button>
-    <button class="neumorphButton" on:click={resetHabits}> Delete All </button>
     <button class="neumorphButton" on:click={saveHabits}> Save </button>
+    <button class="neumorphButton" on:click={resetHabits}> Delete All </button>
   </div>
 </main>
